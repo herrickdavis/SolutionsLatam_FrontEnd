@@ -1,0 +1,53 @@
+﻿@model IEnumerable<FueraDeLimiteViewModel>
+@inject IStringLocalizer<SharedResources> SharedLocalizer;
+@if (Model.Count() > 0)
+{
+    foreach (var item in Model.Select((Value, Index) => new { Value = Value, Index = Index }))
+    {
+        <div class="card card-custom mb-5">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4  p-0" >
+                        <div id="divMapa_@item.Index" class="divMapa" data-mostrar-mapa="@item.Value.coordenadas.mostrar_mapa" data-latitud="@item.Value.coordenadas.latitud" data-longitud="@item.Value.coordenadas.longitud" style="height:400px"></div>
+                    </div>
+                    <div class="col-md-8">
+                        <h3>
+                            <span class="fas fa-flask text-success"></span> Muestra: @item.Value.numero_muestra &nbsp;
+                            <span class="fa fa-calendar-alt text-dark"></span> @item.Value.fecha_muestreo  &nbsp;
+                            <span class="fas fa-map-marker-alt text-danger"></span> @item.Value.nombre_estacion
+                        </h3>
+                        <div class="row">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">@SharedLocalizer["Parametro"]</th>
+                                            <th scope="col">@SharedLocalizer["Resultado"]</th>
+                                            <th scope="col">@SharedLocalizer["Norma"]</th>
+                                            <th scope="col">@SharedLocalizer["Valor Min"]</th>
+                                            <th scope="col">@SharedLocalizer["Valor Max"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var fila in item.Value.data)
+                                        {
+                                            <tr>
+                                                <td>@fila.nombre_parametro</td>
+                                                <td>@fila.resultado</td>
+                                                <td>@fila.norma</td>
+                                                <td>@fila.minimo</td>
+                                                <td>@fila.maximo</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+    }
+}

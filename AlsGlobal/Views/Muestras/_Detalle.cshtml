@@ -1,0 +1,183 @@
+﻿@model MuestraViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+<!--begin::Table Widget 6-->
+@if(Model.coordenadas.mostrar_mapa){
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card card-custom" id="cardMapa">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h3 class="card-label">@SharedLocalizer["Muestras.Ubicacion"]</h3>
+                    </div>
+                    <div class="card-toolbar">
+                        <a href="#" class="btn btn-icon btn-sm btn-hover-light-primary mr-1" data-card-tool="toggle" data-toggle="tooltip" data-placement="top" title="Esconder mapa">
+                            <i class="ki ki-arrow-down icon-nm"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="map" style="height:400px" data-latitud="@Model.coordenadas.latitud" data-longitud="@Model.coordenadas.longitud">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<div class="row">
+    <div class="col-md-5 mb-5">
+        <div class="card card-custom">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">@SharedLocalizer["Muestras.InformacionDeLaMuestra"]</h3>
+                </div>
+            </div>
+            <div class="card-body p-3">
+                <table class="table table-striped">
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Estado"]
+                        </th>
+                        <td>
+                            @Model.info.estado
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                             @SharedLocalizer["Muestras.NumeroGrupo"]
+                        </th>
+                        <td>
+                            @Model.info.numero_grupo
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.NumeroMuestra"]
+                        </th>
+                        <td>
+                            @Model.info.numero_muestra
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.CodigoMuestra"]
+                        </th>
+                        <td>
+                            @Model.info.codigo_muestra
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.Estacion"]
+                        </th>
+                        <td>
+                            @Model.info.estacion
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                           @SharedLocalizer["Muestras.TipoMuestra"]
+                        </th>
+                        <td>
+                            @Model.info.tipo_muestra
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                             @SharedLocalizer["Muestras.Solicitante"]
+                        </th>
+                        <td>
+                           @Model.info.solicitante
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                             @SharedLocalizer["Muestras.Contratante"]
+                        </th>
+                        <td>
+                            @Model.info.contratante
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.FechaMuestreo"]
+                        </th>
+                        <td>
+                            @Model.info.fecha_muestreo
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.Latitud"]
+                        </th>
+                        <td>
+                            @Model.info.latitud
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.Longitud"]
+                        </th>
+                        <td>
+                            @Model.info.longitud
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.Zona"]
+                        </th>
+                        <td>
+                            @Model.info.zona
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            @SharedLocalizer["Muestras.ProcedenciaDeLaMuestra"]
+                        </th>
+                        <td>
+                            @Model.info.procedencia
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card card-custom">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="card-label">
+                            @SharedLocalizer["Muestras.ValoresDeLaMuestra"]
+                        </h3>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-8 col-8">
+                        @Html.DropDownList("ddlValoresMuestra", Model.limite.Select(
+                            x=> new SelectListItem{
+                                Text = x.nombre,
+                                Value = x.id.ToString(),
+                                Selected = x.select
+                            }
+                        ), new {
+                            @class="form-control",
+                            @data_id=Model.info.codigo_muestra
+                        })
+                    </div>
+                    <div class="col-md-4 col-4">
+                        <button type="button" id="btnFiltrar" class="btn btn-sm btn-info">
+                            <span class="fas fa-filter"></span> @SharedLocalizer["Filtrar"]
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 table-responsive" id="table-parametros">
+                        <partial name="_Parametros" model="Model.parametros" view-data='@new ViewDataDictionary(ViewData) { { "mostrar_limite", Model.mostrar_limite } }'/>
+                        @* @await Html.PartialAsync("_Parametros", Model.parametros, new ViewDataDictionary{ { "mostrar_limite", Model.mostrar_limite } }) *@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

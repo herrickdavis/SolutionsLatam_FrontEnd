@@ -1,0 +1,92 @@
+﻿@model ReporteHistoricoRequestViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{ 
+  var TipoMuestras = (IEnumerable<SelectListItem>)ViewBag.TipoMuestras;
+}
+<div class="row">
+    <div class="col-md-5 mb-5">
+        <div class="card card-custom">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">@SharedLocalizer["ReporteHistorico.TituloReporteHistorico"]</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label> @SharedLocalizer["TipoMuestras"] </label>
+                            @Html.DropDownList("id_tipo_muestra", TipoMuestras, new
+                           {
+                                @class = "form-control selectpicker",
+                               @data_size = "7",
+                               @data_live_search = "true",
+                               @title = SharedLocalizer["ValorDefectoSelect"]
+                            })
+
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label> @SharedLocalizer["Proyecto"] </label>
+                            <select id="id_proyecto" class="form-control selectpicker" data-size="5" data-live-search="true" data-hide-disabled="true" data-show-selectAll="true" data-actions-box="true" multiple="multiple" title=@SharedLocalizer["ValorDefectoSelect"]>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label> @SharedLocalizer["Estaciones"] </label>
+                            <select id="id_estacion" class="form-control selectpicker" data-size="5" data-hide-disabled="true" data-actions-box="true" multiple="multiple" data-live-search="true" title=@SharedLocalizer["ValorDefectoSelect"]>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" id="divNormas">
+                        <div class="form-group">
+                            <label> @SharedLocalizer["Normas"] </label>
+                            <select id="id_limite" class="form-control selectpicker" data-size="5" data-live-search="true" title=@SharedLocalizer["ValorDefectoSelect"]>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label> @SharedLocalizer["Parametros"] </label>
+                            <select id="id_parametro" class="form-control selectpicker" data-size="5"  data-hide-disabled="true" data-actions-box="true" multiple="multiple" data-live-search="true" title=@SharedLocalizer["ValorDefectoSelect"]>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <button class="btn btn-info btn-lg btn-block">
+                                <span class="fas fa-search"></span> @SharedLocalizer["BotonBuscar"]
+                            </button>
+                            <button type="button" class="btn btn-success"><i class="flaticon-download"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7">
+        <div class="card card-custom">
+            <div class="card-header">
+                <div class="card-title">
+                    <h3 class="card-label">@SharedLocalizer["ReporteHistorico.Grafico"]</h3>
+                </div>
+            </div>
+            <div class="card-body" id="divGrafico">
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var urlGetTipoMuestras = "@Url.Action("GetTipoMuestras", "ReporteHistorico")"
+        var urlObtenerEstaciones = "@Url.Action("ObtenerEstaciones", "ReporteHistorico")";
+        var urlObtenerEstacionesProyectosYLimites = "@Url.Action("ObtenerEstacionesProyectosYLimites", "ReporteHistorico")";
+        var urlObtenerParametros = "@Url.Action("ObtenerParametros", "ReporteHistorico")";
+        var urlObtenerGrafico = "@Url.Action("ObtenerGraficos", "ReporteHistorico")";
+        var urlGetDataHistoricaExcel = "@Url.Action("GetDataHistoricaExcel", "ReporteHistorico")";
+    </script>
+    <script src="/js/reporteHistorico/detalleReporteHistorico.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,81 @@
+﻿body{
+    font-size:12px !important;
+
+}
+.h5{
+    font-size:1rem !important;
+}
+.bootstrap-select .dropdown-menu.inner > li.dropdown-header {
+    font-weight: bold;
+    color: black;
+}
+.content .bootstrap-select .dropdown-menu{
+  z-index:100 !important
+}
+
+#tablaMuestras > tbody > tr{
+  cursor:pointer !important;
+}
+
+.paneltab{
+  width:500px !important;
+}
+.table td {
+    vertical-align: middle !important;
+}
+.col-detalle:hover {
+    background-color:#e1dede !important;
+    color: #3F4254 !important;
+}
+    .col-detalle:hover i {
+        color: #181C32 !important
+    }
+
+.bg-danger{
+    background-color: #FFE8E6 !important;
+}
+.bg-success{
+    background-color: #E6FFE8 !important;
+}
+.card.card-custom > .card-header{
+    min-height: 50px !important;
+    max-height: 60px !important;
+}
+.card.card-custom > .card-body{
+    padding:1.25rem 2.25rem !important;
+}
+.maximo-tabla {
+    max-height: 750px;
+    overflow: auto
+}
+.table-filtered-jf th {
+    border-right: 1px solid #D3D4D7 !important;
+    border-left: 1px solid #D3D4D7 !important;
+}
+.text-success {
+    color: #E6FFE8 !important;
+}
+.text-danger {
+    color: #FFE8E6 !important;
+}
+.table.sticky th {
+    position: sticky;
+    top: 0;
+    z-index: 11
+}
+
+.noselect {
+-webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+}
+.table-filtered-jf th.drag__over__right, .table-filtered-jf td.drag__over__right{
+    border-right: 2px solid blue !important;
+}
+.table-filtered-jf th.drag__over__left, .table-filtered-jf td.drag__over__left{
+    border-left: 2px solid blue !important;
+}

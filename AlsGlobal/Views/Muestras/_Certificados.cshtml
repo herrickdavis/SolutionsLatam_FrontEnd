@@ -1,0 +1,84 @@
+﻿@model ResponseServiceViewModel<List<string>, List<string>, List<string>>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    int rowPage = (int)ViewBag.RowPage;
+}
+<div class="table-responsive">
+    <table class="table sticky" id="tablaCertificados">
+        <thead>
+            <tr class="thead-light">
+                <th scope="col" style="max-width:50px">
+                    <div class="checkbox-inline">
+                        <label class="checkbox checkbox-outline checkbox-info">
+                            <input type="checkbox" name="chkSeleccionarTodo" class="chkSeleccionarTodo" />
+                            <span></span>
+                        </label>
+                    </div>
+                </th>
+                <th scope="col"></th>
+                @foreach (var cabecera in Model.cabecera.Select((Value, Index) => new { Index = Index, Value = Value }))
+                {
+                    if (cabecera.Index > 0)
+                    {
+                        <th scope="col" style="min-width:180px !important;" data-header="@cabecera.Value">
+                            @cabecera.Value
+                        </th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fila in Model.pagina.data)
+            {
+                <tr class="@(string.IsNullOrEmpty(fila.render.color)? "" : $"{fila.render.color}")" data-id="@fila.data.FirstOrDefault()">
+                    <td scope="col">
+                        <div class="checkbox-inline">
+                            <label class="checkbox checkbox-outline checkbox-info">
+                                <input type="checkbox" name="chkDescarga" class="chkDescargaCertificado" />
+                                <span></span>
+                            </label>
+                        </div>
+                    </td>
+                    <td scope="col">
+                        @if (fila.render.con_documentos)
+                        {
+                            <a href="javascript:void(0)">
+                                <i class="fas fa-file-download text-dark"></i>
+                            </a>
+                        }
+                    </td>
+                    @foreach (var item in fila.data.Select((Value, Index) => new { Index = Index, Value = Value }))
+                    {
+                        if (item.Index > 0)
+                        {
+                            <td scope="col">
+                                <a>
+                                    @if (Model.format[item.Index] == "flag")
+                                    {
+                                        if (fila.render.flag)
+                                        {
+                                            <span class="btn btn-icon btn-xs btn-info">
+                                                <i class="fab fa-font-awesome-flag fs-2"></i>
+                                            </span> @this.AddFormatDate(item.Value)
+                                        }
+                                        else
+                                        {
+                                            @this.AddFormatDate(item.Value)
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @this.AddFormatDate(item.Value)
+                                    }
+                                </a>
+                            </td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <vc:pagina pagina="@Model.pagina" div-id="footerTableCertificado" row-page="rowPage"></vc:pagina>
+</div>

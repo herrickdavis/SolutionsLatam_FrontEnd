@@ -1,0 +1,26 @@
+﻿@model IEnumerable<DocumentoMuestraViewModel>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+
+}
+@if (Model != null && Model.Count() > 0)
+{
+    <p>
+        <a href="javascript:void(0)" class="descargarMuestra" data-id="@ViewBag.Id[0]" download><i class="fas fa-download"></i> @SharedLocalizer["DescargarTodo"]</a>
+    </p>
+}
+<ul class="list-group h5">
+    @if (Model != null && Model.Count() > 0)
+    {
+        foreach (var documento in Model)
+        {
+            <li class="list-group-item file" data-id="@documento.id">
+                <a href="javascript:void(0)" class="descargarDocumento" download>@Html.GetIcon(documento.extension)  &nbsp;&nbsp; @documento.nombre_documento</a>
+            </li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item">@SharedLocalizer["NoArchivo"]</li>
+    }
+</ul>

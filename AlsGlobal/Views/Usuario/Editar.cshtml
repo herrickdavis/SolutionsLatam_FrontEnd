@@ -1,0 +1,128 @@
+@model EditarUsuarioRequestViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    var empresas = (IEnumerable<SelectListItem>)ViewBag.Empresas;
+    var roles = (IEnumerable<SelectListItem>)ViewBag.Roles;
+    var idiomas = (IEnumerable<SelectListItem>)ViewBag.Idiomas;
+}
+<div class="card card-custom gutter-b">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                @SharedLocalizer["EditarUsuario.Titulo"]
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-action="Editar" asp-controller="Usuario" asp-method="POST" asp-route-id="@Model.id">
+             <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Nombre"]</label>
+                    <input type="text" class="form-control" asp-for="nombre"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Email"]</label>
+                    <input type="email" class="form-control" asp-for="email"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Contraseña"]</label>
+                    <div class="input-group">
+                        <input class="form-control" asp-for="password"/>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary btn-generar" type="button" title="@SharedLocalizer["EditarUsuario.GenerarContrasena"]">
+                                <i class="flaticon-refresh"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Empresas"]</label>
+                    <select asp-items="empresas.OrderBy(x=>x.Text)" class="form-control select2" asp-for="id_empresas" multiple="true">
+
+                    </select>
+                </div>  
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Rol"]</label>
+                    @Html.DropDownList("id_rol", roles, new
+                    {
+                        @class = "form-control selectpicker",
+                        @data_size = "7",
+                        @title = SharedLocalizer["ValorDefectoSelect"]
+                    })
+                </div>  
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.Idioma"]</label>
+                    @Html.DropDownList("idioma", idiomas, new
+                    {
+                        @class = "form-control selectpicker",
+                        @data_size = "7",
+                        @title = SharedLocalizer["ValorDefectoSelect"]
+                    })
+                </div>
+                <div class="form-group">
+                    <label class="form-label"> @SharedLocalizer["EditarUsuario.DataCampo"]</label>
+                    <select class="form-control" asp-for="data_campo">
+                        <option>@SharedLocalizer["ValorDefectoSelect"]</option>
+                        <option value="S">Si</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">@SharedLocalizer["EditarUsuario.VerMuestras"]</label>
+                            <label class="checkbox">
+                                <input type="checkbox" @(Model.ver_empresa_sol == "S" ? "checked=\"checked\"" : "") id="ver_empresa_sol" name="ver_empresa_sol" />
+                                <span></span>
+                                &nbsp;
+                                @SharedLocalizer["EditarUsuario.VerEmpresaSolicitante"]
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox" id="ver_contacto_sol" name="ver_contacto_sol"  @(Model.ver_contacto_sol == "S" ? "checked=\"checked\"" : "")/>
+                                <span></span>
+                                &nbsp;
+                                @SharedLocalizer["EditarUsuario.VerContactoSolicitante"]
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pt-2">
+                        <div class="form-group">
+                             <label class="form-label"></label>
+                            <label class="checkbox">
+                                <input type="checkbox"  @(Model.ver_empresa_con == "S" ? "checked=\"checked\"" : "") id="ver_empresa_con" name="ver_empresa_con"/>
+                                <span></span>
+                                 &nbsp;
+                                @SharedLocalizer["EditarUsuario.VerEmpresaContratante"]
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox">
+                                <input type="checkbox"  @(Model.ver_contacto_con == "S" ? "checked=\"checked\"" : "") id="ver_contacto_con" name="ver_contacto_con"/>
+                                <span></span>
+                                 &nbsp;
+                                @SharedLocalizer["EditarUsuario.VerContactoContratante"]
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <button class="btn btn-primary" type="submit" id="btnEditar">@SharedLocalizer["EditarUsuario.Editar"]</button>
+            </div>
+        </div>
+        </form>
+       
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var urlGenerarContrasena = "@Url.Action("GenerarContrasena", "Usuario")";
+        var placeholder = "@SharedLocalizer["ValorDefectoSelect"]";
+    </script>
+    <script src="~/js/usuario/editarUsuario.js" asp-append-version="true"></script>
+}

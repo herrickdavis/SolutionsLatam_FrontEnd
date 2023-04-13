@@ -1,0 +1,50 @@
+﻿ <!--begin::Languages-->
+@inject IStringLocalizer<SharedResources> SharedLocalizer 
+<div class="dropdown mr-1">
+    <!--begin::Toggle-->
+    <div class="topbar-item" data-toggle="dropdown" data-offset="10px,0px">
+        <div class="btn btn-icon btn-clean btn-dropdown btn-lg">
+            @Html.GetActualLanguage()
+        </div>
+    </div>
+    <!--end::Toggle-->
+    <!--begin::Dropdown-->
+    <div class="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm">
+        <!--begin::Nav-->
+        <ul class="navi navi-hover py-4">
+            <!--begin::Item-->
+            <li class="navi-item">
+                <a href="?culture=en-US" class="navi-link">
+                    <span class="symbol symbol-20 mr-3">
+                        <img src="/assets/media/svg/flags/226-united-states.svg" alt="" />
+                    </span>
+                    <span class="navi-text">@SharedLocalizer["TraduccionIngles"]</span>
+                </a>
+            </li>
+            <!--end::Item-->
+            <!--begin::Item-->
+            <li class="navi-item active">
+                <a href="?culture=es-PE" class="navi-link">
+                    <span class="symbol symbol-20 mr-3">
+                        <img src="/assets/media/svg/flags/188-peru.svg" alt="" />
+                    </span>
+                    <span class="navi-text">@SharedLocalizer["TraduccionEspanol"]</span>
+                </a>
+            </li>
+            <!--end::Item-->
+            <!--begin::Item-->
+            <li class="navi-item">
+                <a href="?culture=pt-BR" class="navi-link">
+                    <span class="symbol symbol-20 mr-3">
+                        <img src="/assets/media/svg/flags/255-brazil.svg" alt="" />
+                    </span>
+                    <span class="navi-text">@SharedLocalizer["TraduccionPortugues"]</span>
+                </a>
+            </li>
+            <!--end::Item-->
+        </ul>
+        <!--end::Nav-->
+    </div>
+    <!--end::Dropdown-->
+</div>
+<!--end::Languages-->

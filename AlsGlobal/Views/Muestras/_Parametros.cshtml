@@ -1,0 +1,37 @@
+﻿@model IEnumerable<MuestraViewModel.Parametros>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    var mostrar_limite = ViewBag.mostrar_limite;
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">
+                @SharedLocalizer["Parametro"]
+            </th>
+            <th scope="col">
+                @SharedLocalizer["Muestras.Resultado"]
+            </th>
+            <th scope="col">
+                @SharedLocalizer["Muestras.Unidades"]
+            </th>
+            @if(mostrar_limite){
+                <th scope="col">
+                    @SharedLocalizer["Muestras.Limites"]
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var parametro in Model){
+        <tr data-mostrar="@parametro.mostrar" class="@(parametro.color != null ? parametro.color: "")">
+            <td>@parametro.nombre</td>
+            <td>@(parametro.valor == null ? "--": parametro.valor)</td>
+            <td>@(parametro.unidad == null ? "--": parametro.unidad)</td>
+             @if(mostrar_limite){
+            <td>@(parametro.limite == null ? "--": parametro.limite)</td>
+             }
+        </tr>
+        }
+    </tbody>
+</table>

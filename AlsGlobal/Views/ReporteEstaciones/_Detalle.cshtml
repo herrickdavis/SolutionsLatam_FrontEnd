@@ -1,0 +1,52 @@
+﻿@model IEnumerable<ReporteEstacionesViewModel>
+@inject IStringLocalizer<SharedResources> SharedLocalizer 
+<div class="card card-custom mb-5">
+    <div class="card-header">
+        <div class="card-title">
+            @SharedLocalizer["ReporteEstaciones.TituloDetalle"] <span id="lblParametro"></span>&nbsp;&nbsp;&nbsp;<a id="btnEtiquetas" class="text-info">Ver etiquetas</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div id="divMapa" style="height:400px;width:100%">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card card-custom mb-5">
+    <div class="card-body">
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>@SharedLocalizer["Estacion"]</th>
+                            <th>@SharedLocalizer["Muestras.CodigoMuestra"]</th>
+                            <th>@SharedLocalizer["ReporteEstaciones.UltimoMuestreo"]</th>
+                            <th>@SharedLocalizer["Muestras.Resultado"]</th>
+                            <th>@SharedLocalizer["ReporteEstaciones.Unidad"]</th>
+                            <th>@SharedLocalizer["ReporteEstaciones.PuntoMapa"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                        <tr class="item" data-estacion="@item.estacion" data-valor="@item.valor" data-latitud="@item.latitud" data-longitud="@item.longitud">
+                            <td>@item.estacion</td>
+                            <td>@item.muestra</td>
+                            <td>@item.fecha_muestreo</td>
+                            <td>@item.valor</td>
+                            <td>@item.unidad</td>
+                            <td>@item.punto_mapa</td>
+                        </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+           
+        </div>
+    </div>
+</div>
+

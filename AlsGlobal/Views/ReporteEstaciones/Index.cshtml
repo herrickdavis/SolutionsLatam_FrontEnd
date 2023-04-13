@@ -1,0 +1,62 @@
+﻿@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    var Matriz = (IEnumerable<SelectListItem>)ViewBag.Matriz;
+}
+<div class="card card-custom gutter-b">
+    <div class="card-header">
+        <div class="card-title">
+            @SharedLocalizer["ReporteEstaciones.Titulo"]
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>@SharedLocalizer["ReporteEstaciones.Matriz"]</label>
+                    @Html.DropDownList("id_matriz", Matriz, new
+                   {
+                       @class = "form-control selectpicker",
+                       @data_size = "7",
+                       @data_live_search = "true",
+                       @title = @SharedLocalizer["ValorDefectoSelect"]
+                   })
+                </div>
+            </div>
+            <div class="col-md-3" id="divParametro">
+                <div class="form-group">
+                    <label>@SharedLocalizer["Parametros"]</label>
+                    <select id="id_parametros" class="form-control selectpicker" title="@SharedLocalizer["ValorDefectoSelect"]" data-size="5" data-live-search="true">
+                    </select>
+
+                </div>
+            </div>
+            <div class="col-md-3" id="divEstacion">
+                <div class="form-group">
+                    <label>@SharedLocalizer["Estaciones"]</label>
+                    <select id="id_estacion" class="form-control selectpicker" multiple="multiple"  data-hide-disabled="true" data-actions-box="true" title="@SharedLocalizer["ValorDefectoSelect"]" data-size="5" data-live-search="true">
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2  d-flex align-items-center">
+                <button class="btn btn-info btn-sm" id="btnBuscar" type="button">
+                    <span class="fas fa-search"></span>
+                    @SharedLocalizer["BotonBuscar"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divDetalle">
+
+</div>
+@section scripts{
+    <script>
+        var urlGetParametrosReporteEstaciones = "@Url.Action("GetParametrosReporteEstaciones", "ReporteEstaciones")";
+        var urlGetEstacionesReporteEstaciones = "@Url.Action("GetEstacionesReporteEstaciones", "ReporteEstaciones")";
+        var urlGetReporteEstaciones = "@Url.Action("GetReporteEstaciones", "ReporteEstaciones")";
+        var verEtiquetas = "@SharedLocalizer["ReporteEstaciones.VerEtiquetas"]";
+       var ocultarEtiquetas = "@SharedLocalizer["ReporteEstaciones.OcultarEtiquetas"]";
+    </script>
+    <script src="~/js/reporteEstaciones/reporteEstaciones.js" asp-append-version="true"></script>
+}

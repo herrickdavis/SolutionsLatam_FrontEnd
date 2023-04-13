@@ -1,0 +1,51 @@
+﻿@model IPagina
+@{
+  var select = (IEnumerable<SelectListItem>)ViewBag.Select;
+  string id = ViewBag.Id;
+}
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+<div class="col-md-12" id="@id">
+    <div class="row">
+        <div class="col-md-9">
+            <div class="d-flex flex-wrap py-2 mr-30">
+                <a class="btn btn-icon btn-sm btn-light-primary mr-2 my-1" data-page="1">
+                    <i class="ki ki-bold-double-arrow-back icon-xs"></i>
+                </a>
+                <a class="btn btn-icon btn-sm btn-light-primary mr-2 my-1" data-page="@(Model.current_page > 1 ? Model.current_page - 1 : 1)">
+                    <i class="ki ki-bold-arrow-back icon-xs"></i>
+                </a>
+                @if (!Model.PrimerBloque)
+                {
+                    <a class="btn btn-icon btn-sm border-0 btn-hover-primary mr-2 my-1" data-page="@(Model.from - 1)">...</a>
+                }
+                @for (var i = Model.from; i <= Model.to; i++)
+                {
+                    if (i == Model.current_page)
+                    {
+                        <a class="btn btn-icon btn-sm border-0 btn-hover-primary active mr-2 my-1" data-page="@i">@i</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-icon btn-sm border-0 btn-hover-primary mr-2 my-1" data-page="@i">@i</a>
+                    }
+                }
+                @if (!Model.UltimoBloque)
+                {
+                    <a class="btn btn-icon btn-sm border-0 btn-hover-primary mr-2 my-1" data-page="@(Model.to + 1)">...</a>
+                }
+                <a class="btn btn-icon btn-sm btn-light-primary mr-2 my-1" data-page="@(Model.current_page < Model.last_page ? Model.current_page + 1 : Model.last_page)">
+                    <i class="ki ki-bold-arrow-next icon-xs"></i>
+                </a>
+                <a class="btn btn-icon btn-sm btn-light-primary mr-2 my-1" data-page="@Model.last_page">
+                    <i class="ki ki-bold-double-arrow-next icon-xs"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="d-flex align-items-center py-3">
+                @Html.DropDownList("ddlPaginado", select, new { @class= "form-control form-control-sm text-primary font-weight-bold mr-4 border-0 bg-light-primary paginador", @style="width:75px" })
+                <span class="text-muted">@SharedLocalizer["Mostrando"] @Model.per_page @SharedLocalizer["de"] @Model.total @SharedLocalizer["filas"]</span>
+            </div>
+        </div>
+    </div>
+</div>

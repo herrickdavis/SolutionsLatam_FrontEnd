@@ -1,0 +1,33 @@
+﻿@model DataPreliminarViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ViewData["Title"] = "Home Page";
+}
+ <!--begin::Table Widget 6-->
+<div class="card card-custom gutter-b">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                @SharedLocalizer["TituloDataPreliminar"]
+            </h3>
+
+        </div>
+        <div class="card-toolbar">
+            <!--begin::Button-->
+            <a asp-action="ObtenerReporte" asp-controller="DatosPreliminar" download class="btn btn-primary font-weight-bolder">
+                <i class="flaticon-download"></i>
+                </span>@SharedLocalizer["ExportarExcel"]
+            </a>
+            <!--end::Button-->
+        </div>
+    </div>
+    <div class="card-body">
+        @await Html.PartialAsync("_DataPreliminar", Model)
+    </div>
+</div>
+@section scripts{
+    <script>
+        var urlDataPreliminar = "@Url.Action("ObtenerDataPreliminar", "DatosPreliminar")";
+    </script>
+    <script src="/js/dataPreliminar/dataPreliminar.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,59 @@
+ @model UsuarioResponseViewModel
+@{
+    int rowPage = (int)ViewBag.RowPage;
+}
+ @inject IStringLocalizer<SharedResources> SharedLocalizer
+ <table class="table table-striped" id="tablaUsuario">
+    <thead>
+        <tr>
+            <th data-header="nombre">
+                @SharedLocalizer["Usuario.Nombre"]
+            </th>
+            <th data-header="email">
+                @SharedLocalizer["Usuario.Email"]
+            </th>
+            <th data-header="nombre_empresa">
+                @SharedLocalizer["Usuario.NombreEmpresa"]
+            </th>
+            <th data-header="rol">
+                @SharedLocalizer["Usuario.Rol"]
+            </th>
+            @* <th data-header="activo">
+                @SharedLocalizer["Usuario.Estado"]
+            </th> *@
+            <th data-header="accion">
+                @SharedLocalizer["Usuario.Acciones"]
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var item in Model.data.OrderBy(x=>x.name)){
+            <tr>
+                <td>@item.name</td>
+                <td>@item.email</td>
+                <td>@item.nombre_empresa</td>
+                <td>@item.rol.ToUpper()</td>
+                @* <td>@Html.ShowStatus(item.activo, SharedLocalizer["Usuario.Activo"], SharedLocalizer["Usuario.Inactivo"])</td> *@
+                <td>
+                    <a asp-action="Editar" asp-controller="Usuario" asp-route-id="@item.id" class="btn btn-sm btn-success">
+                    <i class="fas fa-user-edit"></i>
+                        @SharedLocalizer["Usuario.Editar"]</a>
+                    @if(item.activo == "S"){
+                        <button class="btn btn-sm btn-danger btnActivarDesactivar" data-id="@item.id">
+                        <i class="fas fa-user-minus"></i>
+                        @SharedLocalizer["Usuario.Desactivar"]</button>
+                    }
+                    else{
+                        <button class="btn btn-sm btn-primary btnActivarDesactivar"  data-id="@item.id">
+                        <i class="fas fa-user-check"></i>
+                        @SharedLocalizer["Usuario.Activar"]</button>
+                    }
+                  
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="row">
+    <vc:pagina pagina="@Model" div-id="footerUsuario" row-page="rowPage"></vc:pagina>
+</div>

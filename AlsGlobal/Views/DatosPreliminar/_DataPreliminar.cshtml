@@ -1,0 +1,33 @@
+﻿@model DataPreliminarViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    int rowPage = (int)ViewBag.RowPage;
+}
+<div class="table-responsive">
+    <table class="table sticky">
+        <thead>
+            <tr class="thead-light">
+                @foreach (var cabecera in Model.cabecera)
+                {
+                    <th scope="col" style="min-width:180px !important;" data-header="@cabecera">
+                        @cabecera
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fila in Model.pagina.data)
+            {
+                <tr>
+                    @foreach (var celda in fila)
+                    {
+                        <td scope="col">@this.AddFormatDate(celda)</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<div class="row">
+    <vc:pagina pagina="@Model.pagina" div-id="footerDataPreliminar" row-page="rowPage"></vc:pagina>
+</div>

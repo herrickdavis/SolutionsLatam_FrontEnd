@@ -1,0 +1,42 @@
+@model IEnumerable<EmpresaViewModel> 
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+<!--begin::Table Widget 6-->
+<div class="card card-custom gutter-b">
+    <div class="card-header flex-wrap border-0 pt-6 pb-0">
+        <div class="card-title">
+            <h3 class="card-label">
+                @SharedLocalizer["Empresa.Titulo"]
+            </h3>
+        </div>
+    </div>
+    <div class="card-body">
+         <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>@SharedLocalizer["Empresa.Nombre"]</th>
+                    <th>@SharedLocalizer["Empresa.Acciones"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.OrderBy(x=>x.nombre_empresa)){
+                    <tr>
+                        <td>@item.nombre_empresa</td>
+                        <td>
+                            <button class="btn btn-sm btn-info">
+                                <i class="fas fa-users"></i>
+                                @SharedLocalizer["Empresa.Usuarios"]</button>
+                            <button class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                             @SharedLocalizer["Empresa.Editar"]</button>
+                            <button class="btn btn-sm btn-danger">
+                                <i class="fas fa-user-times"></i>
+                            @SharedLocalizer["Empresa.Eliminar"]</button>
+                            </td>
+                    </tr>
+                }
+            </tbody>
+         </table>
+    </div>
+</div>
+@section scripts{ 
+}

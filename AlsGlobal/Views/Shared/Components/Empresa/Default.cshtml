@@ -1,0 +1,19 @@
+﻿@model IEnumerable<EmpresaViewModel>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@inject IAspNetUser User
+@{ 
+  var idSeleccionado = Convert.ToInt32(ViewBag.Seleccionada);
+}
+@if (User.Rol < 4)
+{
+    <div class="form-group">
+        <label>@SharedLocalizer["Empresa"]</label>
+        <div class="input-group">
+            @Html.DropDownList("id_empresa", Model.Select(x => new SelectListItem(x.nombre_empresa, x.id.ToString(), x.id == idSeleccionado)).ToList(), SharedLocalizer["ValorDefectoSelect"], new { @class = "form-control" })
+
+            <div class="input-group-append">
+                <button class="btn btn-primary btnCambiar" type="button">@SharedLocalizer["Cambiar"]</button>
+            </div>
+        </div>
+    </div>
+}

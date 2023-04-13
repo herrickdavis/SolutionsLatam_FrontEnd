@@ -1,0 +1,70 @@
+﻿@model FueraDeLimiteRequestViewModel
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+
+@{
+    var tipoMuestra = (IEnumerable<SelectListItem>)ViewBag.TipoMuestra;
+    var estaciones = (IEnumerable<SelectListItem>)ViewBag.Estaciones;
+}
+<div class="card card-custom gutter-b">
+    <div class="card-header">
+        <div class="card-title">
+            @SharedLocalizer["FueraDeLimite"]
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>@SharedLocalizer["FechaInicioyFechaFin"]</label>
+                    <div class="input-group">
+                        <input type='text' class="form-control" id="rangoFechas" readonly placeholder="@SharedLocalizer["PlaceholderFecha"]" data-start-date="@Model.fecha_inicio" data-end-date="@Model.fecha_fin" />
+                        <div class="input-group-append">
+                            <span class="input-group-text">
+                                <i class="fa fa-calendar-alt"></i>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-3" id="divTipoMuestra">
+                <div class="form-group">
+                    <label>@SharedLocalizer["TipoMuestras"]</label>
+                    @Html.DropDownList("id_tipo_muestra", tipoMuestra, new { @id = "id_tipo_muestra", @class = "form-control selectpicker", @title = @SharedLocalizer["ValorDefectoSelect"], @data_size = "5", @data_live_search = "true" })
+                    @*<select id="id_tipo_muestra" class="form-control selectpicker" title="@SharedLocalizer["ValorDefectoSelect"]" data-size="5" data-live-search="true">
+                        </select>*@
+
+                </div>
+            </div>
+            <div class="col-md-3" id="divEstacion">
+                <div class="form-group">
+                    <label>@SharedLocalizer["Estaciones"]</label>
+                    <select id="id_estacion" class="form-control selectpicker" multiple="multiple" data-hide-disabled="true" data-actions-box="true" title="@SharedLocalizer["ValorDefectoSelect"]" data-size="5" data-live-search="true">
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2  d-flex align-items-center">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button class="btn btn-info btn-sm" id="btnBuscar" type="button">
+                        <span class="fas fa-search"></span>
+                        @SharedLocalizer["BotonBuscar"]
+                    </button>
+                    <button type="button" class="btn btn-success"><i class="flaticon-download"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="divDetalle">
+
+</div>
+@section scripts{
+    <script>
+        var urlGetTipoMuestras = "@Url.Action("GetTipoMuestras", "FueraDeLimite")";
+        var urlObtenerEstaciones = "@Url.Action("ObtenerEstaciones", "FueraDeLimite")";
+        var urlGetReporteFueraLimites = "@Url.Action("GetReporteFueraLimites", "FueraDeLimite")";
+        var urlGetReporteFueraLimiteExcel = "@Url.Action("GetReporteFueraLimiteExcel", "FueraDeLimite")";
+    </script>
+    <script src="/js/fueraDeLimite/fueraDeLimite.js" asp-append-version="true"></script>
+} 
