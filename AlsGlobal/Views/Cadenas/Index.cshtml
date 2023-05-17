@@ -1,0 +1,53 @@
+﻿@model ResponseServiceViewModel<List<string>, List<string>, List<string>>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ResponseServiceViewModel<List<string>, List<string>, List<string>> proyectos = (ResponseServiceViewModel<List<string>, List<string>, List<string>>)ViewBag.Proyecto;
+
+}
+
+<div class="vistaLista" style="display:block">
+    <div class="card card-custom gutter-b">
+        <div class="card-header flex-wrap border-0 pt-6 pb-0">
+            <div class="card-title">
+                <h3 class="card-label">
+                    @SharedLocalizer["Estaciones"]
+                </h3>
+            </div>
+            <div class="form-inline">
+                <div class="card-toolbar mr-5">
+                    <select class="form-control selectpicker" aria-label="Default select example">
+                        <option value="1">Sin Muestras, sin Parametros</option>
+                        <option value="2">Con muestras y Parametros</option>
+                    </select>
+                </div>
+                <div class="card-toolbar">
+                    <button type="button" class="btn btn-info btnDescargarCOC">
+                        <i class="flaticon-interface-10"></i> @SharedLocalizer["Cadenas.Generar"]
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="divEstaciones">
+                @await Html.PartialAsync("_Cadenas", Model)
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var urlGenerarCadena = "@Url.Action("ObtenerCadenas", "Cadenas")";
+
+        var urlEstacionesAsignar = "@Url.Action("AsignarAlias", "Estaciones")";
+        var urlDetalle = "@Url.Action("Detalle", "Muestras")";
+        var urlGetDocumentosMuestra = "@Url.Action("GetDocumentosMuestra", "Muestras")";
+        var urlGetDocumentoMuestra = "@Url.Action("GetDocumentoMuestra", "Muestras")";
+        var urlObtenerParametros = "@Url.Action("ObtenerParametros", "Muestras")";
+        var urlGetZipMuestra = "@Url.Action("GetZipMuestra", "Muestras")";
+        var urlSetColumnasUsuario = "@Url.Action("SetColumnasUsuario", "Perfil")";
+    </script>
+
+    <script src="/js/cadenas/cadenas.js" asp-append-version="true"></script>
+    <script src="/js/muestras/detalleMuestras.js" asp-append-version="true"></script>
+}

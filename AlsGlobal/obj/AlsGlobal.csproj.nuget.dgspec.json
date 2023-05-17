@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "H:\\Trabajos\\ASLGlobal\\AlsGlobalGit\\AlsGlobal\\AlsGlobal.csproj": {}
+    "C:\\Users\\Urbano\\Source\\Repos\\SolutionsLatam_FrontEnd\\AlsGlobal\\AlsGlobal.csproj": {}
   },
   "projects": {
-    "H:\\Trabajos\\ASLGlobal\\AlsGlobalGit\\AlsGlobal\\AlsGlobal.csproj": {
+    "C:\\Users\\Urbano\\Source\\Repos\\SolutionsLatam_FrontEnd\\AlsGlobal\\AlsGlobal.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "H:\\Trabajos\\ASLGlobal\\AlsGlobalGit\\AlsGlobal\\AlsGlobal.csproj",
+        "projectUniqueName": "C:\\Users\\Urbano\\Source\\Repos\\SolutionsLatam_FrontEnd\\AlsGlobal\\AlsGlobal.csproj",
         "projectName": "AlsGlobal",
-        "projectPath": "H:\\Trabajos\\ASLGlobal\\AlsGlobalGit\\AlsGlobal\\AlsGlobal.csproj",
-        "packagesPath": "C:\\Users\\josep\\.nuget\\packages\\",
-        "outputPath": "H:\\Trabajos\\ASLGlobal\\AlsGlobalGit\\AlsGlobal\\obj\\",
+        "projectPath": "C:\\Users\\Urbano\\Source\\Repos\\SolutionsLatam_FrontEnd\\AlsGlobal\\AlsGlobal.csproj",
+        "packagesPath": "C:\\Users\\Urbano\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Urbano\\Source\\Repos\\SolutionsLatam_FrontEnd\\AlsGlobal\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\josep\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Urbano\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -46,6 +43,10 @@
             "Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation": {
               "target": "Package",
               "version": "[5.0.1, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[5.0.2, )"
             }
           },
           "imports": [
@@ -54,7 +55,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -66,7 +68,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.103\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -1,0 +1,82 @@
+﻿@model ResponseServiceViewModel<List<string>, List<string>, List<string>>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    int rowPage = (int)ViewBag.RowPage;
+}
+<div class="table-responsive">
+    <table class="table sticky" id="tablaEstaciones">
+        <thead>
+            <tr class="thead-light">
+                <th scope="col">
+                    <div class="checkbox-inline">
+                        <label class="checkbox checkbox-outline checkbox-info">
+                            <input type="checkbox" name="chkSeleccionarTodo" class="chkSeleccionarTodo" />
+                            <span></span>
+                        </label>
+                    </div>
+                </th>
+                <th scope="col"></th>
+                @foreach (var cabecera in Model.cabecera)
+                {
+                    <th scope="col" style="min-width:180px !important;" data-header="@cabecera" data-orderable="true">
+                        @cabecera
+                    </th>
+                }
+
+            </tr>
+        </thead>
+        <tbody style="max-height:250px !important; overflow-y:auto">
+            @foreach (var fila in Model.pagina.data)
+            {
+                <tr class="col-detalle @(string.IsNullOrEmpty(fila.render?.color)? "" : $"{fila.render?.color}")" data-id="@fila.id">
+                    <td scope="col">
+                        <div class="checkbox-inline">
+                            <label class="checkbox checkbox-outline checkbox-info">
+                                <input type="checkbox" name="chkDescarga" class="chkDescargaMuestra" />
+                                <span></span>
+                            </label>
+                        </div>
+                    </td>
+                    <td scope="col">
+                        @if (fila.render?.con_documentos ?? false)
+                        {
+                            <a href="javascript:void(0)">
+                                <i class="fas fa-file-download text-dark"></i>
+                            </a>
+                        }
+                    </td>
+                    @foreach (var item in fila.data.Select((Value, Index) => new { Index = Index, Value = Value }))
+                    {
+                        <td scope="col">
+                            <a>
+                                @if (Model.format[item.Index] == "flag")
+                                {
+                                    if (fila.render?.flag ?? false)
+                                    {
+                                        <span class="btn btn-icon btn-xs btn-info">
+                                            <i class="fab fa-font-awesome-flag fs-2"></i>
+                                        </span> @this.AddFormatDate(item.Value)
+                                    }
+                                    else
+                                    {
+                                        @this.AddFormatDate(item.Value)
+                                    }
+                                }
+                                else
+                                {
+                                    @this.AddFormatDate(item.Value)
+                                }
+                            </a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div class="row">
+    <vc:pagina pagina="@Model.pagina" div-id="footerTableEstacion" row-page="rowPage"></vc:pagina>
+    @*  <partial name="~/Views/Shared/_Paginador.cshtml" model="Model.pagina" view-data='@new ViewDataDictionary(ViewData) { { "Id", "footerTableMuestra"},{ "cantPag", cantPag } }' />*@
+
+</div>

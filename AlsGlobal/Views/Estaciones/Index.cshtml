@@ -1,0 +1,205 @@
+﻿@model ResponseServiceViewModel<List<string>, List<string>, List<string>>
+@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+    ResponseServiceViewModel<List<string>, List<string>, List<string>> proyectos = (ResponseServiceViewModel<List<string>, List<string>, List<string>>)ViewBag.Proyecto;
+    
+}
+
+<div class="vistaLista" style="display:block">
+    <div class="card card-custom gutter-b">
+        <div class="card-header flex-wrap border-0 pt-6 pb-0">
+            <div class="card-title">
+                <h3 class="card-label">
+                    @SharedLocalizer["Estaciones"]
+                </h3>
+            </div>
+            <div class="card-toolbar">
+                <button type="button" class="btn btn-danger mr-1 btnLimpiarMuestra" data-toggle="modal" data-tipo="estacion" data-target="#modalLimpiarEstaciones" style="display:none;">
+                    <i class="flaticon-interface-10"></i> @SharedLocalizer["Estaciones.LimpiarAlias"]
+                </button>
+                <button type="button" class="btn btn-info btnDescargarMuestra" data-toggle="modal" data-tipo="estacion" data-target="#modalAsignar" style="display:none;">
+                    <i class="flaticon-interface-10"></i> @SharedLocalizer["Estaciones.AsignarAlias"]
+                </button>
+                <button type="button" class="btn btn-danger mr-1 btnLimpiarProyecto" data-toggle="modal" data-tipo="estacion" data-target="#modalLimpiarProyectos" style="display:none;">
+                    <i class="flaticon-interface-10"></i> @SharedLocalizer["Estaciones.LimpiarAlias"]
+                </button>
+                <button type="button" class="btn btn-info btnDescargarProyecto" data-toggle="modal" data-tipo="proyecto" data-target="#modalAsignarProyecto" style="display:none;">
+                    <i class="flaticon-interface-10"></i> @SharedLocalizer["Estaciones.AsignarAlias"]
+                </button>
+                <div class="dropdown dropdown-inline">
+                    <a href="#" class="btn btn-icon-primary btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="svg-icon svg-icon-primary svg-icon-2x">
+                            <!--begin::Svg Icon | path:C:\wamp64\www\keenthemes\themes\keen\theme\demo1\dist/../src/media/svg/icons\General\Other1.svg--><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                    <rect x="0" y="0" width="24" height="24" />
+                                    <circle fill="#000000" cx="12" cy="5" r="2" />
+                                    <circle fill="#000000" cx="12" cy="12" r="2" />
+                                    <circle fill="#000000" cx="12" cy="19" r="2" />
+                                </g>
+                            </svg><!--end::Svg Icon-->
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-md dropdown-menu-right" style="">
+                        <!--begin::Navigation-->
+                        <ul class="navi navi-hover py-5">
+                            <li class="navi-item">
+                                <a href="javascript:void(0)" class="navi-link opcionEstacion">
+                                    <span class="navi-icon">
+                                        <span class="svg-icon svg-icon-md svg-icon-primary">
+                                            <!--begin::Svg Icon | path: /var/www/preview.keenthemes.com/kt-products/docs/keen/html/releases/2023-02-02-051933/core/html/src/media/icons/duotune/maps/map009.svg-->
+                                            
+                                                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                    <path opacity="0.3" d="M13.625 22H9.625V3C9.625 2.4 10.025 2 10.625 2H12.625C13.225 2 13.625 2.4 13.625 3V22Z" fill="#000000" />
+                                                    <path d="M19.625 10H12.625V4H19.625L21.025 6.09998C21.325 6.59998 21.325 7.30005 21.025 7.80005L19.625 10Z" fill="#000000" />
+                                                    <path d="M3.62499 16H10.625V10H3.62499L2.225 12.1001C1.925 12.6001 1.925 13.3 2.225 13.8L3.62499 16Z" fill="#000000" />
+                                                </svg>
+                                           
+                                            <!--end::Svg Icon-->
+                                        </span>
+                                    </span>
+                                    <span class="navi-text">Estaciones</span>
+                                </a>
+                            </li>
+                            <li class="navi-item">
+                                <a href="javascript:void(0)" class="navi-link opcionProyecto">
+                                    <span class="navi-icon">
+                                        <span class="svg-icon svg-icon-md svg-icon-primary">
+                                            <!--begin::Svg Icon | path:assets/media/svg/icons/Communication/Clipboard-check.svg-->
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24px" height="24px" viewBox="0 0 24 24" version="1.1">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path d="M8,3 L8,3.5 C8,4.32842712 8.67157288,5 9.5,5 L14.5,5 C15.3284271,5 16,4.32842712 16,3.5 L16,3 L18,3 C19.1045695,3 20,3.8954305 20,5 L20,21 C20,22.1045695 19.1045695,23 18,23 L6,23 C4.8954305,23 4,22.1045695 4,21 L4,5 C4,3.8954305 4.8954305,3 6,3 L8,3 Z" fill="#000000" opacity="0.3"></path>
+                                                    <path d="M10.875,15.75 C10.6354167,15.75 10.3958333,15.6541667 10.2041667,15.4625 L8.2875,13.5458333 C7.90416667,13.1625 7.90416667,12.5875 8.2875,12.2041667 C8.67083333,11.8208333 9.29375,11.8208333 9.62916667,12.2041667 L10.875,13.45 L14.0375,10.2875 C14.4208333,9.90416667 14.9958333,9.90416667 15.3791667,10.2875 C15.7625,10.6708333 15.7625,11.2458333 15.3791667,11.6291667 L11.5458333,15.4625 C11.3541667,15.6541667 11.1145833,15.75 10.875,15.75 Z" fill="#000000"></path>
+                                                    <path d="M11,2 C11,1.44771525 11.4477153,1 12,1 C12.5522847,1 13,1.44771525 13,2 L14.5,2 C14.7761424,2 15,2.22385763 15,2.5 L15,3.5 C15,3.77614237 14.7761424,4 14.5,4 L9.5,4 C9.22385763,4 9,3.77614237 9,3.5 L9,2.5 C9,2.22385763 9.22385763,2 9.5,2 L11,2 Z" fill="#000000"></path>
+                                                </g>
+                                            </svg>
+                                            <!--end::Svg Icon-->
+                                        </span>
+                                    </span>
+                                    <span class="navi-text">Proyectos</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!--end::Navigation-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="divEstaciones">
+                @await Html.PartialAsync("_Estaciones", Model)
+            </div>
+            <div id="divProyectos" style="display:none">
+                @await Html.PartialAsync("_Proyectos", proyectos)
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalAsignar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Estaciones.AsignarAlias"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inputAlias" class="form-label">Alias de las estaciones seleccionadas:</label>
+                    <input type="text" class="form-control" id="inputAlias" aria-describedby="aliasEstacion">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-primary font-weight-bold asignar">@SharedLocalizer["Estacion.Asignar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END  MOdal Estacion -->
+<!-- MOdal Proyecto -->
+<div class="modal fade" id="modalAsignarProyecto" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Estaciones.AsignarAlias"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inputAliasProyecto" class="form-label">Alias de los proyectos seleccionados:</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-primary font-weight-bold asignarProyecto">@SharedLocalizer["Estacion.Asignar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Limpiar Estaciones -->
+<div class="modal fade" id="modalLimpiarEstaciones" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Limpiar Alias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inputAliasProyecto" class="form-label">¿Estas seguro de Limpiar los alias seleccionados?</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-danger font-weight-bold limpiarEstacion">@SharedLocalizer["Estacion.Limpiar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Limpiar Proyecto -->
+<div class="modal fade" id="modalLimpiarProyectos" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Limpiar Alias</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="inputAliasProyecto" class="form-label">¿Estas seguro de Limpiar los alias seleccionados?</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-danger font-weight-bold limpiarProyecto">@SharedLocalizer["Estacion.Limpiar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var urlProyectos = "@Url.Action("ObtenerProyectos", "Estaciones")";
+        var urlProyectosAsignar = "@Url.Action("AsignarAliasProyectos", "Estaciones")";
+        var urlEstaciones = "@Url.Action("ObtenerEstaciones", "Estaciones")";
+        var urlEstacionesAsignar = "@Url.Action("AsignarAlias", "Estaciones")";
+        
+        
+        var urlDetalle = "@Url.Action("Detalle", "Muestras")";
+        var urlGetDocumentosMuestra = "@Url.Action("GetDocumentosMuestra", "Muestras")";
+        var urlGetDocumentoMuestra = "@Url.Action("GetDocumentoMuestra", "Muestras")";
+        var urlObtenerParametros = "@Url.Action("ObtenerParametros", "Muestras")";
+        var urlGetZipMuestra = "@Url.Action("GetZipMuestra", "Muestras")";
+        var urlSetColumnasUsuario = "@Url.Action("SetColumnasUsuario", "Perfil")";
+    </script>
+
+    <script src="/js/estaciones/estaciones.js" asp-append-version="true"></script>
+    <script src="/js/muestras/detalleMuestras.js" asp-append-version="true"></script>
+}

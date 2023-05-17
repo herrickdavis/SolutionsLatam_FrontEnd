@@ -213,8 +213,6 @@
   <data name="Tabla_Opcion_Con_Informe" xml:space="preserve">
     <value>Con Informe</value>
   </data>
-  
- 
   <data name="Menu.DataPreliminar" xml:space="preserve">
     <value>Data Preliminar</value>
   </data>
@@ -230,10 +228,9 @@
   <data name="Menu.Reportes" xml:space="preserve">
     <value>Historicos</value>
   </data>
-    <data name="Menu.ReporteEstaciones" xml:space="preserve">
+  <data name="Menu.ReporteEstaciones" xml:space="preserve">
     <value>Estación Parametro</value>
   </data>
-
   <data name="Muestras.TituloMuestras" xml:space="preserve">
     <value>Muestras</value>
   </data>
@@ -255,7 +252,7 @@
   <data name="Muestras.InformacionDeLaMuestra" xml:space="preserve">
     <value>Información de la muestra</value>
   </data>
-   <data name="Muestras.Estado" xml:space="preserve">
+  <data name="Muestras.Estado" xml:space="preserve">
     <value>Estado</value>
   </data>
   <data name="Muestras.Resultado" xml:space="preserve">
@@ -300,7 +297,7 @@
   <data name="Muestras.Ubicacion" xml:space="preserve">
     <value>Ubicación</value>
   </data>
-   <data name="Muestras.Retroceder" xml:space="preserve">
+  <data name="Muestras.Retroceder" xml:space="preserve">
     <value>Retroceder</value>
   </data>
   <data name="Muestras.ProcedenciaDeLaMuestra" xml:space="preserve">
@@ -312,7 +309,6 @@
   <data name="Muestras.Documentos" xml:space="preserve">
     <value>Documentos</value>
   </data>
-
   <data name="Muestras.Descargar" xml:space="preserve">
     <value>Descargar</value>
   </data>
@@ -331,15 +327,13 @@
   <data name="Muestras.Cerrar" xml:space="preserve">
     <value>Cerrar</value>
   </data>
-
   <data name="ReporteHistorico.TituloReporteHistorico" xml:space="preserve">
     <value>Reporte Historico</value>
   </data>
   <data name="ReporteHistorico.Grafico" xml:space="preserve">
     <value>Gráfico</value>
   </data>
-
-<data name="ReporteEstaciones.UltimoMuestreo" xml:space="preserve">
+  <data name="ReporteEstaciones.UltimoMuestreo" xml:space="preserve">
     <value>Último Muestreo</value>
   </data>
   <data name="ReporteEstaciones.PuntoMapa" xml:space="preserve">
@@ -348,39 +342,37 @@
   <data name="ReporteEstaciones.Matriz" xml:space="preserve">
     <value>Matriz</value>
   </data>
-<data name="ReporteEstaciones.TituloDetalle" xml:space="preserve">
+  <data name="ReporteEstaciones.TituloDetalle" xml:space="preserve">
     <value>Estaciones donde se ha tomado muestra de </value>
   </data>
-<data name="ReporteEstaciones.VerEtiquetas" xml:space="preserve">
+  <data name="ReporteEstaciones.VerEtiquetas" xml:space="preserve">
     <value>Ver Etiquetas</value>
   </data>
-<data name="ReporteEstaciones.Unidad" xml:space="preserve">
+  <data name="ReporteEstaciones.Unidad" xml:space="preserve">
     <value>Unidad</value>
   </data>
-<data name="ReporteEstaciones.OcultarEtiquetas" xml:space="preserve">
+  <data name="ReporteEstaciones.OcultarEtiquetas" xml:space="preserve">
     <value>Ocultar Etiquetas</value>
   </data>
   <data name="Perfil.CambioContraseña" xml:space="preserve">
     <value>Cambiar Contraseña</value>
   </data>
-<data name="Perfil.ContraseñaActual" xml:space="preserve">
+  <data name="Perfil.ContraseñaActual" xml:space="preserve">
     <value>Contraseña Actual</value>
   </data>
-<data name="Perfil.ContraseñaNueva" xml:space="preserve">
+  <data name="Perfil.ContraseñaNueva" xml:space="preserve">
     <value>Contraseña Nueva</value>
   </data>
   <data name="Perfil.Aceptar" xml:space="preserve">
     <value>Actualizar Contraseña</value>
   </data>
-
-
   <data name="Usuario.Titulo" xml:space="preserve">
     <value>Lista de Usuarios</value>
   </data>
   <data name="Usuario.Nombre" xml:space="preserve">
     <value>Nombre</value>
   </data>
-   <data name="Usuario.Email" xml:space="preserve">
+  <data name="Usuario.Email" xml:space="preserve">
     <value>Email</value>
   </data>
   <data name="Usuario.Acciones" xml:space="preserve">
@@ -404,12 +396,9 @@
   <data name="Usuario.Activar" xml:space="preserve">
     <value>Activar</value>
   </data>
-   <data name="Usuario.Editar" xml:space="preserve">
+  <data name="Usuario.Editar" xml:space="preserve">
     <value>Editar</value>
   </data>
-
-
-
   <data name="CrearUsuario.Titulo" xml:space="preserve">
     <value>Crear Usuario</value>
   </data>
@@ -434,16 +423,16 @@
   <data name="CrearUsuario.Empresas" xml:space="preserve">
     <value>Empresas</value>
   </data>
-   <data name="CrearUsuario.VerMuestras" xml:space="preserve">
+  <data name="CrearUsuario.VerMuestras" xml:space="preserve">
     <value>Ver Muestras</value>
   </data>
   <data name="CrearUsuario.VerEmpresaSolicitante" xml:space="preserve">
     <value>Ver Empresa Solicitante</value>
   </data>
-   <data name="CrearUsuario.VerContactoSolicitante" xml:space="preserve">
+  <data name="CrearUsuario.VerContactoSolicitante" xml:space="preserve">
     <value>Ver Contacto Solicitante</value>
   </data>
-   <data name="CrearUsuario.VerEmpresaContratante" xml:space="preserve">
+  <data name="CrearUsuario.VerEmpresaContratante" xml:space="preserve">
     <value>Ver Empresa Contratante</value>
   </data>
   <data name="CrearUsuario.VerContactoContratante" xml:space="preserve">
@@ -455,7 +444,6 @@
   <data name="CrearUsuario.GenerarContrasena" xml:space="preserve">
     <value>Generar Contraseña</value>
   </data>
-
   <data name="EditarUsuario.Titulo" xml:space="preserve">
     <value>Editar Usuario</value>
   </data>
@@ -480,28 +468,27 @@
   <data name="EditarUsuario.Empresas" xml:space="preserve">
     <value>Empresas</value>
   </data>
-   <data name="EditarUsuario.VerMuestras" xml:space="preserve">
+  <data name="EditarUsuario.VerMuestras" xml:space="preserve">
     <value>Ver Muestras</value>
   </data>
   <data name="EditarUsuario.VerEmpresaSolicitante" xml:space="preserve">
     <value>Ver Empresa Solicitante</value>
   </data>
-   <data name="EditarUsuario.VerContactoSolicitante" xml:space="preserve">
+  <data name="EditarUsuario.VerContactoSolicitante" xml:space="preserve">
     <value>Ver Contacto Solicitante</value>
   </data>
-   <data name="EditarUsuario.VerEmpresaContratante" xml:space="preserve">
+  <data name="EditarUsuario.VerEmpresaContratante" xml:space="preserve">
     <value>Ver Empresa Contratante</value>
   </data>
   <data name="EditarUsuario.VerContactoContratante" xml:space="preserve">
     <value>Ver Contacto Contratante</value>
   </data>
-   <data name="EditarUsuario.Editar" xml:space="preserve">
+  <data name="EditarUsuario.Editar" xml:space="preserve">
     <value>Editar</value>
   </data>
   <data name="EditarUsuario.GenerarContrasena" xml:space="preserve">
     <value>Generar Contraseña</value>
   </data>
-
   <data name="Filtrar" xml:space="preserve">
     <value>Filtrar</value>
   </data>
@@ -526,10 +513,9 @@
   <data name="Parametros" xml:space="preserve">
     <value>Parámetros</value>
   </data>
-   <data name="Parametro" xml:space="preserve">
-	<value>Parámetro</value>
+  <data name="Parametro" xml:space="preserve">
+    <value>Parámetro</value>
   </data>
-
   <data name="Mostrando" xml:space="preserve">
     <value>Mostrando</value>
   </data>
@@ -557,16 +543,22 @@
   <data name="ErrorSeleccionarEmpresa" xml:space="preserve">
     <value>Seleccionar empresa.</value>
   </data>
-   <data name="Empresa" xml:space="preserve">
+  <data name="Empresa" xml:space="preserve">
     <value>Empresa</value>
   </data>
-	<data name="Cambiar" xml:space="preserve">
+  <data name="Cambiar" xml:space="preserve">
     <value>Cambiar</value>
   </data>
   <data name="RecargarPagina" xml:space="preserve">
     <value>Desea recargar la pagina? (Para poder actualizar el menu)</value>
   </data>
-   <data name="Recargar" xml:space="preserve">
+  <data name="Recargar" xml:space="preserve">
     <value>Recargar</value>
+  </data>
+  <data name="Estaciones.AsignarAlias" xml:space="preserve">
+    <value>Asignar Alias</value>
+  </data>
+  <data name="Estacion.Asignar" xml:space="preserve">
+    <value>Asignar</value>
   </data>
 </root>

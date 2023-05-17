@@ -1,7 +1,17 @@
 ﻿
 namespace AlsGlobal.Models
 {
-  public class EstacionesReporteEstacionesRequestViewModel
+public class AsignarAliasRequestViewModel
+{
+    public string[] id { get; set; }
+    public string alias { get; set; }
+}
+    public class AsignarAliasResponseModel
+    {
+        public string estado { get; set; }
+        public string mensaje { get; set; }
+    }
+    public class EstacionesReporteEstacionesRequestViewModel
   {
     public string id_tipo_muestra { get; set; }
     public string id_parametro { get; set; }

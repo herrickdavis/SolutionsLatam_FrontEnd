@@ -49,6 +49,8 @@ namespace AlsGlobal
       services.AddHttpClient<IEmpresaService, EmpresaService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddHttpClient<IUsuarioService, UsuarioService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddHttpClient<IProyectoService, ProyectoService>(x => x.BaseAddress = new Uri(baseAddress));
+      services.AddHttpClient<IAllEstacionesService, AllEstacionesService>(x => x.BaseAddress = new Uri(baseAddress));
+      services.AddHttpClient<ICadenasService, CadenasService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
       services.AddScoped<IAspNetUser, AspNetUser>();
       services.AddScoped<IRolService, RolService>();
