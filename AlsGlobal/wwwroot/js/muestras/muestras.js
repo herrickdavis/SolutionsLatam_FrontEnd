@@ -74,14 +74,17 @@
             e.stopPropagation();
         });
         agregarAltoDinamicamente($(".table-responsive"), altoTabla);
+        mostrarMuestra();
     }
     var inicializarEvento = function () {
         $(".descargar").on("click", descargarTodo);
         $(".opcionMuestra").on("click", mostrarMuestra);
         $(".opcionCertificado").on("click", mostrarCertificado);
         $(".btnDescargarCertificado").on("click", descargarZipInformes);
+        $("#descargar_reporte").on("click", descargarReporte);
         $("#btnRetroceder").on("click", mostrarLista);
         $(".dropdown-columnas input[type=checkbox]").on("change", mostrarOcultarColumnas);
+        $(".btnReporteMuestra").on("click", getPlanillas);
         inicializarEventoMuestra();
         inicializarEventoCertificado();
     }
@@ -102,6 +105,97 @@
         $("input[type=checkbox][name=chkTipoArchivo]").on("change", cambiarTipoArchivo);
         $("#divCertificados #ddlPaginado").on("change", obtenerTablaCertificado);
     }
+
+    var jqXHR;
+
+    var descargarReporte = function () {
+        $("#descargar_reporte").hide()
+        $("#descargando_activo").show()
+
+        var id_muestras = [];
+        var trs = $(".chkDescargaMuestra:checked").closest("tr");
+        $.each(trs, (index, tr) => {
+            id_muestras.push(tr.getAttribute("data-id"));
+        });
+                
+        var id = $("#selectIdPlantilla").val()
+        var numero_grupo = $("#numero_grupo").val()
+        var year_grupo = $("#year_grupo").val()
+        var model = {
+            filtros: armarFiltros(),
+            id: id,
+            numero_grupo: numero_grupo,
+            year_grupo: year_grupo,
+            id_muestras: id_muestras
+        };
+        $.post({
+            url: urlGetDocumentoEdd,
+            data: model,
+            xhrFields: {
+                responseType: 'blob'
+            },
+            beforeSend: function (xhr) {
+                jqXHR = xhr;
+            },
+            success: function (data) {
+                $("#descargando_activo").hide()
+                $("#descargar_reporte").show()
+                var contentType = jqXHR.getResponseHeader("Content-Type");
+                var contentDisposition = jqXHR.getResponseHeader("Content-Disposition");
+                var fileName = getFileNameFromContentDisposition(contentDisposition) || "EDD";
+
+                var blob = new Blob([data], { type: contentType });
+
+                var downloadLink = document.createElement('a');
+                downloadLink.href = window.URL.createObjectURL(blob);
+
+                // Usa el nombre de archivo extraído del encabezado
+                downloadLink.download = fileName;
+                downloadLink.click();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $("#descargando_activo").hide()
+                $("#descargar_reporte").show()
+                console.log(errorThrown);
+            }
+        });
+
+    }
+
+    var getPlanillas = function () {
+        // Comprobar si los datos ya están en sessionStorage
+        var storedData = sessionStorage.getItem('planillas');
+        if (storedData) {
+            var planillas = JSON.parse(storedData);
+            renderPlanillas(planillas);
+        } else {
+            let model = {};
+            $.post(urlObtenerEdd, model)
+                .then(response => {
+                    // Guardar los datos en sessionStorage
+                    sessionStorage.setItem('planillas', JSON.stringify(response));
+
+                    renderPlanillas(response);
+                })
+                .catch(error => console.log(error));
+        }
+    }
+
+    var renderPlanillas = function (planillas) {
+        $('#selectIdPlantilla').empty();
+        planillas.forEach(item => {
+            $('#selectIdPlantilla').append('<option value="' + item.id + '">' + item.nombre_reporte + '</option>');
+        });
+        $("#modalReporte").modal('show');
+    }
+
+    var getFileNameFromContentDisposition = function (contentDisposition) {
+        var match = contentDisposition.match(/filename="([^"]+)"/);
+        if (match && match[1]) {
+            return decodeURIComponent(match[1]);
+        }
+        return null;
+    }
     var armarFiltros = function () {
         var filtros = filterDataTable.getFilter();
         return filtros.select(x => { return { cabecera: x.id.toLowerCase(), condicion: x.condition.toLowerCase(), valor: x.value }; })
@@ -119,21 +213,46 @@
         obtenerTablaCertificado(paginaActual);
     };
     var obtenerTablaMuestra = function (page) {
+        page = parseInt(page, 10);
+        if (isNaN(page)) {
+            page = "1"
+        }
+        var filters = armarFiltros();
+        var filterKey = filters.map(filter => filter.cabecera + filter.condicion + filter.valor).join('-');
+
         var rowPage = $("#divMuestras .paginador").val();
-        $("#tablaMuestras tbody:first").hide("fast");
-        var model = { filtros: armarFiltros() };
-        $.post(`${urlMuestras}?page=${page}&rowPage=${rowPage}`, model)
-            .then(function (html) {
-                $("#divMuestras").empty();
-                $("#divMuestras").html(html);
-                inicializarEventoMuestra();
-                filterDataTable.refresh($("#tablaMuestras"));
-                mostrarBotonDescargaMuestra();
-                agregarAltoDinamicamente($(".table-responsive"), altoTabla);
-            })
-            .catch(function (error) {
-                $("#tablaMuestras tbody:first").show("fast");
-            });
+        var pageKey = 'tablaMuestrasHtml' + page.toString() + rowPage.toString() + filterKey;
+        var timestampKey = 'tablaMuestrasTimestamp';
+        var storedHtml = sessionStorage.getItem(pageKey);
+        var storedTimestamp = sessionStorage.getItem(timestampKey);
+
+        var TEN_MINUTES = 50 * 60 * 1000;
+
+        if (storedHtml && storedTimestamp && (Date.now() - parseInt(storedTimestamp) < TEN_MINUTES)) {
+            renderTablaMuestra(storedHtml);
+        } else {
+            sessionStorage.removeItem(pageKey);
+            sessionStorage.removeItem(timestampKey);
+            $("#tablaMuestras tbody:first").hide("fast");
+            var model = { filtros: filters };
+            $.post(`${urlMuestras}?page=${page}&rowPage=${rowPage}`, model)
+                .then(function (html) {
+                    sessionStorage.setItem(pageKey, html);
+                    sessionStorage.setItem(timestampKey, Date.now().toString());
+                    renderTablaMuestra(html);
+                })
+                .catch(function (error) {
+                    $("#tablaMuestras tbody:first").show("fast");
+                });
+        }
+    }
+    var renderTablaMuestra = function (html) {
+        $("#divMuestras").empty();
+        $("#divMuestras").html(html);
+        inicializarEventoMuestra();
+        filterDataTable.refresh($("#tablaMuestras"));
+        mostrarBotonDescargaMuestra();
+        agregarAltoDinamicamente($(".table-responsive"), altoTabla);
     }
     var obtenerTablaCertificado = function (page) {
         var rowPage = $("#divCertificados .paginador").val();
@@ -211,6 +330,16 @@
             $(".btnDescargarCertificado").hide("fast");
         }
     }
+
+    var mostrarBotonDescargaReporte = function () {
+        $(".btnReporteMuestra").show("fast");
+    }
+
+    var ocultarBotonDescargaReporte = function () {
+        $(".btnReporteMuestra").hide("fast");
+    }
+    
+
     var seleccionarTodo = function () {
         if (this.checked) {
             $(".chkDescargaMuestra").prop("checked", true);
@@ -267,18 +396,22 @@
         descargarArchivo(urlGetDocumentoInformes + queryString);
     }
     var mostrarMuestra = function () {
+        mostrarBotonDescargaReporte();
         $("#divMuestras").show("fast");
         mostrarBotonDescargaMuestra();
         $(".btnDescargarCertificado").hide("fast");
         $(".dropdown-btn-columnas").show("fast");
         $("#divCertificados").hide("fast");
+        obtenerTablaMuestra();
     }
     var mostrarCertificado = function () {
+        ocultarBotonDescargaReporte();
         $("#divCertificados").show("fast");
         mostrarBotonDescargaCertificado();
         $(".btnDescargarMuestra").hide("fast");
         $(".dropdown-btn-columnas").hide("fast");
         $("#divMuestras").hide("fast");
+        obtenerTablaCertificado();
     }
     var cambiarTipoArchivo = function () {
         if ($(this).is(":checked")) {
@@ -305,6 +438,8 @@
             numero_tabla: 1,
             orden: columns
         };
+        //Limpio la session
+        sessionStorage.clear();
         $.post(urlSetColumnasUsuario, model)
          .then(success => {});
     }
@@ -317,6 +452,8 @@
                 columns.push(value.getAttribute("data-header"));
             }
         });
+        //Limpio la session
+        sessionStorage.clear();
         if(isChecked)
             columns.splice(0,0, this.getAttribute("data-header"));
 
@@ -327,6 +464,7 @@
         $.post(urlSetColumnasUsuario, model)
          .then(success => obtenerTablaMuestra(1));
     }
+
     return {
         init: iniciar,
         refresh: function () {

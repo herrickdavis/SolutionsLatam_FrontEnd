@@ -20,6 +20,7 @@ var editarUsuario = function () {
             id_empresas: $("#id_empresas").val(),
             idioma: $("#idioma").val(),
             data_campo: $("#data_campo").val(),
+            region: $("#region").val(),
             ver_empresa_sol: $("#ver_empresa_sol").is(":checked") ? "S" : "N",
             ver_contacto_sol: $("#ver_contacto_sol").is(":checked") ? "S" : "N",
             ver_empresa_con: $("#ver_empresa_con").is(":checked") ? "S" : "N",

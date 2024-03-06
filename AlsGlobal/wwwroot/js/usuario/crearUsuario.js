@@ -18,6 +18,7 @@ var crearUsuario = function () {
             id_empresas: $("#id_empresas").val(),
             idioma: $("#idioma").val(),
             data_campo: $("#data_campo").val(),
+            region: $("#region").val(),
             ver_empresa_solicitante: $("#ver_empresa_solicitante").is(":checked") ? "S" : "N",
             ver_contacto_solicitante: $("#ver_contacto_solicitante").is(":checked") ? "S" : "N",
             ver_empresa_contratante: $("#ver_empresa_contratante").is(":checked") ? "S" : "N",
@@ -40,6 +41,7 @@ var crearUsuario = function () {
         $("#id_empresas").val("");
         $("#idioma").val("");
         $("#data_campo").val("");
+        $("#region").val("");
         $("#ver_empresa_solicitante").prop("checked", false);
         $("#ver_contacto_solicitante").prop("checked", false);
         $("#ver_empresa_contratante").prop("checked", false);

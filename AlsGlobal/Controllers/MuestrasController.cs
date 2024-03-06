@@ -4,7 +4,9 @@ using AlsGlobal.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 namespace AlsGlobal.Controllers
@@ -31,11 +33,20 @@ namespace AlsGlobal.Controllers
         }
     public async Task<IActionResult> Index()
     {
-      var response = await _muestrasService.Obtener(new FiltrosViewModel(), 1);
-      var responseInforme = await _informesService.Obtener(new FiltrosViewModel(), 1);
-      AgregarBloque(response.pagina);
-      AgregarBloque(responseInforme.pagina);
-      ViewBag.Detalle = new MuestraViewModel();
+      //var response = await _muestrasService.Obtener(new FiltrosViewModel(), 1);
+      var response = new ResponseServiceViewModel<List<string>, List<string>, List<string>>();
+            response.cabecera = new List<string> { "---", "---", "---", "---", "---", "---", "---", "---", "---", "---" };
+            response.pagina = new Pagina<List<string>>();
+            response.pagina.data = new List<Data<List<string>>>();
+    //var responseInforme = await _informesService.Obtener(new FiltrosViewModel(), 1);
+    //AgregarBloque(response.pagina);
+    //AgregarBloque(responseInforme.pagina);
+    ViewBag.Detalle = new MuestraViewModel();
+
+      var responseInforme = new ResponseServiceViewModel<List<string>, List<string>, List<string>>();
+      responseInforme.cabecera = new List<string> { "id", "Numero", "Titulo Certificado" };
+      responseInforme.pagina = new Pagina<List<string>>();
+      responseInforme.pagina.data = new List<Data<List<string>>>();
       ViewBag.Informe = responseInforme;
       ViewBag.RowPage = 20;
       ViewBag.ColumnasFilter = await _perfilService.GetColumnas(new ColumnasRequestViewModel(1));
@@ -91,6 +102,14 @@ namespace AlsGlobal.Controllers
       ViewBag.RowPage = rowPage;
       return PartialView("_Muestras", response);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> ObtenerEdd()
+    {
+        var jsonResponse = await _muestrasService.ObtenerEdd();       
+        return Content(jsonResponse.ToString(Formatting.None), "application/json");
+     }
+
     [HttpPost]
     public async Task<IActionResult> ObtenerCertificados(FiltrosViewModel filtro, [FromQuery] int page = 1, [FromQuery] int rowPage = 20)
     {
@@ -115,3 +134,4 @@ namespace AlsGlobal.Controllers
     }
   }
 }
+

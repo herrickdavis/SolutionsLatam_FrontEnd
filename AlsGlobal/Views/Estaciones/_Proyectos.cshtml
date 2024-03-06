@@ -4,13 +4,13 @@
     int rowPage = (int)ViewBag.RowPage;
 }
 <div class="table-responsive">
-    <table class="table sticky" id="tablaProyectos">
+    <table class="table sticky listProyect" id="tablaProyectos">
         <thead>
             <tr class="thead-light">
-                <th scope="col">
+                <th scope="col" style="width:70px !important;">
                     <div class="checkbox-inline">
                         <label class="checkbox checkbox-outline checkbox-info">
-                            <!--<input type="checkbox" name="chkSeleccionarTodo" class="chkSeleccionarTodo" />-->
+                            <input type="checkbox" name="chkSeleccionarTodo" class="chkSeleccionarTodoProyecto" />
                             <span></span>
                         </label>
                     </div>
@@ -18,11 +18,10 @@
                 <th scope="col"></th>
                 @foreach (var cabecera in Model.cabecera)
                 {
-                    <th scope="col" style="min-width:180px !important;" data-header="@cabecera" data-orderable="true">
+                    <th scope="col" style="min-width:90px !important;" data-header="@cabecera" data-orderable="true">
                         @cabecera
                     </th>
-                }
-                
+                }                
             </tr>
         </thead>
         <tbody style="max-height:250px !important; overflow-y:auto">
@@ -72,16 +71,6 @@
                 </tr>
             }
         </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="@Model.cabecera.Count">
-                </td>
-            </tr>
-            <tr>
-                <td colspan="@Model.cabecera.Count">
-                </td>
-            </tr>
-        </tfoot>
     </table>
 
 </div>

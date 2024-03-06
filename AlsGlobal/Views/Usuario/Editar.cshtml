@@ -41,7 +41,7 @@
                     <select asp-items="empresas.OrderBy(x=>x.Text)" class="form-control select2" asp-for="id_empresas" multiple="true">
 
                     </select>
-                </div>  
+                </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
@@ -62,13 +62,33 @@
                         @title = SharedLocalizer["ValorDefectoSelect"]
                     })
                 </div>
-                <div class="form-group">
-                    <label class="form-label"> @SharedLocalizer["EditarUsuario.DataCampo"]</label>
-                    <select class="form-control" asp-for="data_campo">
-                        <option>@SharedLocalizer["ValorDefectoSelect"]</option>
-                        <option value="S">Si</option>
-                        <option value="N">No</option>
-                    </select>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label"> @SharedLocalizer["EditarUsuario.DataCampo"]</label>
+                            <select class="form-control" asp-for="data_campo">
+                                <option>@SharedLocalizer["ValorDefectoSelect"]</option>
+                                <option value="S">Si</option>
+                                <option value="N">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label"> @SharedLocalizer["EditarUsuario.Region"]</label>
+                                <select class="form-control" asp-for="region">
+                                <option>@SharedLocalizer["ValorDefectoSelect"]</option>
+                                <option value="1">Peru</option>
+                                <option value="2">Argentina</option>
+                                <option value="3">Brasil</option>
+                                <option value="4">Chile</option>
+                                <option value="5">Ecuador</option>
+                                <option value="6">República Dominicana</option>
+                                <option value="7">Mexico</option>
+                                <option value="8">Colombia</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">

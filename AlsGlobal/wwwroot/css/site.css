@@ -79,3 +79,33 @@
 .table-filtered-jf th.drag__over__left, .table-filtered-jf td.drag__over__left{
     border-left: 2px solid blue !important;
 }
+.listProyect td:nth-child(1) {
+    width: 70px
+}
+.listProyect td:nth-child(3) {
+    width: 160px
+}
+.listProyect td:nth-child(4) {
+    width: 160px
+}
+.multi-columns {
+    column-count: 2;
+    column-gap: 20px;
+    display: block !important;
+}
+.ui-state-default {
+    cursor: grab;
+}
+
+.table-revisar thead th {
+    position: sticky;
+    top: 0; /* Ajusta esto según sea necesario */
+    background-color: white; /* O el color de fondo que prefieras */
+    z-index: 1; /* Para asegurarse de que la cabecera se mantenga sobre el cuerpo */
+}
+
+.table-revisar {
+    max-height: 380px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}

@@ -93,10 +93,10 @@ var agregarAltoDinamicamente = function (element, porcentage = 1) {
     $(element).css({ "max-height": `${altoDinamico}px`, 'overflow-y': 'auto' });
 }
 var cambiarEmpresa = function () {
-    var empresaSeleccionada = $("#kt_quick_user select").val();
+    sessionStorage.clear();
+    var empresaSeleccionada = $("#miModal #id_empresa").val();
     if (empresaSeleccionada === "") toastr.error(errorSeleccionarEmpresa);
-
-    $.post(urlCambiarEmpresa + "/" + empresaSeleccionada, {}, $("#kt_quick_user"))
+    $.post(urlCambiarEmpresa + "/" + empresaSeleccionada, { id: empresaSeleccionada }, $("#miModal"))
         .then(success => {
             if (success.successBoolean) {
                 document.location.reload();
@@ -105,4 +105,4 @@ var cambiarEmpresa = function () {
         });
    
 }
-$("#kt_quick_user .btnCambiar").on("click", cambiarEmpresa);
+$("#miModal .btnCambiarEmpresa").on("click", cambiarEmpresa);

@@ -38,30 +38,30 @@ namespace AlsGlobal.Services{
       return result;
     }
 
-        public async Task<ResponseServiceViewModel<List<string>, List<string>, List<string>>> GetAllProyectos(FiltrosViewModel filtro, int page = 1, int rowPage = 20)
-        {
-            var contenido = ArmarContenido(filtro);
-            string cultura = ObtenerCultura(_httpContext);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aspNetUser.ObtenerToken());
-            _httpClient.DefaultRequestHeaders.Add("culture", cultura); _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            var response = await _httpClient.PostAsync("GetAllProyectos?page=" + page + "&rowPage=" + rowPage, contenido);
-            //var response = await _httpClient.PostAsync("GetAllEstaciones", null);
+    public async Task<ResponseServiceViewModel<List<string>, List<string>, List<string>>> GetAllProyectos(FiltrosViewModel filtro, int page = 1, int rowPage = 20)
+    {
+        var contenido = ArmarContenido(filtro);
+        string cultura = ObtenerCultura(_httpContext);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aspNetUser.ObtenerToken());
+        _httpClient.DefaultRequestHeaders.Add("culture", cultura); _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        var response = await _httpClient.PostAsync("GetAllProyectos?page=" + page + "&rowPage=" + rowPage, contenido);
+        //var response = await _httpClient.PostAsync("GetAllEstaciones", null);
 
-            var result = await DeserializarObjetoResponse<ResponseServiceViewModel<List<string>, List<string>, List<string>>>(response);
+        var result = await DeserializarObjetoResponse<ResponseServiceViewModel<List<string>, List<string>, List<string>>>(response);
 
-            return result;
-        }
-
-        public async Task<AsignarAliasResponseModel> SetAlias(AsignarAliasRequestViewModel request)
-        {
-            var contenido = ArmarContenido(request);
-            string cultura = ObtenerCultura(_httpContext);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aspNetUser.ObtenerToken());
-            _httpClient.DefaultRequestHeaders.Add("culture", cultura);
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            var response = await _httpClient.PostAsync("SetAliasProyectos", contenido);
-            var result = await DeserializarObjetoResponse<AsignarAliasResponseModel>(response);
-            return result;
-        }
+        return result;
     }
+
+    public async Task<AsignarAliasResponseModel> SetAlias(AsignarAliasRequestViewModel request)
+    {
+        var contenido = ArmarContenido(request);
+        string cultura = ObtenerCultura(_httpContext);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aspNetUser.ObtenerToken());
+        _httpClient.DefaultRequestHeaders.Add("culture", cultura);
+        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        var response = await _httpClient.PostAsync("SetAliasProyectos", contenido);
+        var result = await DeserializarObjetoResponse<AsignarAliasResponseModel>(response);
+        return result;
+    }
+  }
 }

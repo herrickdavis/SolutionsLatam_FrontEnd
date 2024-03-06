@@ -1,0 +1,428 @@
+﻿@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-custom gutter-b">
+            <div class="card-header">
+                <div class="card-title">
+                    @SharedLocalizer["CargaMuestraExterna"]
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="exampleFormControlFile1">Cargar Archivo</label>
+                            <input type="file" class="form-control-file" id="exampleFormControlFile1">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-success btn-block" id="cargarFile"><i class="flaticon-upload"></i> Cargar</button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-info btn-block" id="btn_analizar">
+                            <span class="fas fa-search"></span> @SharedLocalizer["Analizar"]
+                        </button>                            
+                    </div>
+                    <div class="col-md-12 mt-2">
+                        <button class="btn btn-danger btn-block d-none" id="btn_insertar">
+                            <span class="fas fa-terminal"></span> @SharedLocalizer["Insertar"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card card-custom gutter-b">
+            <div class="card-header">
+                <div class="card-title">
+                    @SharedLocalizer["MuestrasPorRevisar"]
+                </div>
+                <div class="card-toolbar">
+                    <button class="btn btn-primary mr-1" id="agregarEstaciones"><i class="fas fa-plus"></i> Estaciones</button>
+                    <button class="btn btn-primary mr-1" id="agregarProyectos"><i class="fas fa-plus"></i> Proyectos</button>
+                    <button class="btn btn-primary" id="descargarPorValidar"><i class="flaticon-download"></i> Descargar</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 table-responsive table-revisar">
+                        <table class="table" id="tabla_validacion">
+                            <thead>
+                                <tr>
+                                    <th scope="col">ID MUESTRA</th>
+                                    <th scope="col">FECHA MUESTREO</th>
+                                    <th scope="col">MATRIZ</th>
+                                    <th scope="col">TIPO_MUESTRA</th>
+                                    <th scope="col">PROYECTO</th>
+                                    <th scope="col">ESTACION</th>
+                                    <th scope="col">EMPRESA CONTRATANTE</th>
+                                    <th scope="col">EMPRESA SOLICITANTE</th>
+                                    <th scope="col">PARAMETRO</th>
+                                    <th scope="col">VALOR</th>
+                                    <th scope="col">UNIDAD</th>
+                                </tr>
+                            </thead>
+                            <tbody id="body_tabla">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Modal body text goes here.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js" asp-append-version="true"></script>
+<script type="module">
+    var urlInfo = "@Url.Action("ObtenerInfo", "DataExterna")";
+    var urlGetMuestras = "@Url.Action("ObtenerMuestras", "DataExterna")";
+    var urlSetFile = "@Url.Action("UploadFile", "DataExterna")";
+    var urlSetMuestras = "@Url.Action("EnviarMuestras", "DataExterna")";
+    var urlGetExcelDataExterna = "@Url.Action("GetExcelDataExterna", "DataExterna")";
+    var urlEliminarFila = "@Url.Action("EliminarFila", "DataExterna")";
+    var urlAgregarEstacion = "@Url.Action("AgregarEstacion", "DataExterna")";
+    var urlAgregarProyecto = "@Url.Action("AgregarProyecto", "DataExterna")";
+    var archivoSeleccionado;
+
+    var botonInsertar = document.getElementById('btn_insertar');
+    
+    document.getElementById('exampleFormControlFile1').addEventListener('change', function (e) {
+        archivoSeleccionado = e.target.files[0];
+    }, false);
+
+    document.getElementById('btn_analizar').addEventListener('click', async function () {
+        await runAnalizar();
+    });
+
+    document.getElementById('agregarEstaciones').addEventListener('click', function () {
+        agregarEstacion();
+    });
+
+    document.getElementById('agregarProyectos').addEventListener('click', function () {
+        agregarProyecto();
+    });
+
+    document.getElementById('btn_insertar').addEventListener('click', function () {
+        insertar();
+    });
+
+    async function runAnalizar() {
+        let dataPost = await obtenerTipoMuestras();
+        //Mejorar y generar bucle
+        let datosExcel = await obtenerMuestras();
+        let data = validarExcelContraTiposMuestras(datosExcel, dataPost);
+        actualizarMuestras(data);
+    }
+
+    $("#cargarFile").on("click", function() {
+        var fileInput = document.getElementById('exampleFormControlFile1');
+        var file = fileInput.files[0];
+        var formData = new FormData();
+        formData.append('file', file);
+
+        $.ajax({
+            url: urlSetFile,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                console.log('Éxito:', data);
+                toastr.success("Se cargo las muestras correctamente");
+            },
+            error: function (xhr, status, error) {
+                console.error('Error:', error);
+                toastr.error(error);
+            }
+        });
+    })
+
+    $("#descargarPorValidar").on("click", async function () {
+        $.ajax({
+        url: urlGetExcelDataExterna, 
+        method: 'POST',
+        contentType: 'application/json',
+        xhrFields: {
+            responseType: 'blob'
+        },
+        success: function(data) {
+            var url = window.URL.createObjectURL(new Blob([data]));
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'muestra_por_validar.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        },
+        error: function(xhr, status, error) {
+            console.error("Error al descargar el archivo:", error);
+        }
+    });
+    });
+
+
+    function leerArchivo(file) {
+        return new Promise((resolve, reject) => {
+            let reader = new FileReader();
+            reader.onload = function (e) {
+                resolve(new Uint8Array(e.target.result));
+            };
+            reader.onerror = reject;
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    function processFile(data) {
+        let workbook = XLSX.read(data, { type: 'array' });
+        let first_sheet_name = workbook.SheetNames[0];
+        let worksheet = workbook.Sheets[first_sheet_name];
+        return XLSX.utils.sheet_to_json(worksheet);
+    }
+
+    async function obtenerTipoMuestras() {
+        try {
+            let response = await $.ajax({
+                url: urlInfo,
+                method: 'POST'
+            });
+            return response;
+        } catch (error) {
+            console.error("Error al obtener los tipos de muestras", error);
+            return [];
+        }
+    }
+
+    async function obtenerMuestras() {
+        try {
+            let response = await $.ajax({
+                url: urlGetMuestras,
+                method: 'POST'
+            });
+            return response;
+        } catch (error) {
+            console.error("Error al obtener los muestras", error);
+            return [];
+        }
+    }
+
+    function validarExcelContraTiposMuestras(datosExcel, dataPost) {
+        const table = document.getElementById("tabla_validacion");
+        const tbody = table.getElementsByTagName('tbody')[0];
+        tbody.innerHTML = '';
+        const columnOrder = ["id_muestra", "fecha_muestreo", "matriz", "tipo_muestra", "proyecto", "estacion", "empresa_contratante", "empresa_solicitante", "parametro", "valor", "unidad"];
+        let contador_errores = 0
+        datosExcel.forEach((filaExcel, indice) => {
+            let tipoMuestraExcel = filaExcel['tipo_muestra'];
+            let estacionExcel = filaExcel['estacion'];
+            let parametroExcel = filaExcel['parametro'];
+            let matrizExcel = filaExcel['matriz'];
+            let proyectoExcel = filaExcel['proyecto'];
+            let empresaConExcel = filaExcel['empresa_contratante'];
+            let empresaSolExcel = filaExcel['empresa_solicitante'];
+
+            let tipoMuestraEncontrado = dataPost['tipo_muestras'].find(tipoMuestra => tipoMuestra.nombre_tipo_muestra === tipoMuestraExcel);
+            let esValidoTipoMuestra = tipoMuestraEncontrado !== undefined;
+            if (esValidoTipoMuestra) {
+                filaExcel['id_tipo_muestra'] = tipoMuestraEncontrado.id;
+            }
+            
+            let estacionEncontrado = dataPost['estaciones'].find(estacion => estacion.nombre_estacion === estacionExcel);
+            let esValidoEstacion = estacionEncontrado !== undefined;
+            if (esValidoEstacion) {
+                filaExcel['id_estacion'] = estacionEncontrado.id;
+            }
+
+            let parametroEncontrado = dataPost['parametros'].find(parametro => parametro.nombre_parametro === parametroExcel);
+            let esValidoParametro = parametroEncontrado !== undefined;
+            if (esValidoParametro) {
+                filaExcel['id_parametro'] = parametroEncontrado.id;
+            }
+
+            let matrizEncontrado = dataPost['matrices'].find(matriz => matriz.nombre_matriz === matrizExcel);
+            let esValidoMatriz = matrizEncontrado !== undefined;
+            if (esValidoMatriz) {
+                filaExcel['id_matriz'] = matrizEncontrado.id;
+            }
+
+            let proyectoEncontrado = dataPost['proyectos'].find(proyecto => proyecto.nombre_proyecto === proyectoExcel);
+            let esValidoProyecto = proyectoEncontrado !== undefined;
+            if (esValidoProyecto) {
+                filaExcel['id_proyecto'] = proyectoEncontrado.id;
+            }
+
+            let empresaConEncontrado = dataPost['empresas'].find(empresaCon => empresaCon.nombre_empresa === empresaConExcel);
+            let esValidoEmpresaCon = empresaConEncontrado !== undefined;
+            if (esValidoEmpresaCon) {
+                filaExcel['id_empresa_contratante'] = empresaConEncontrado.id;
+            }
+
+            let empresaSolEncontrado = dataPost['empresas'].find(empresaSol => empresaSol.nombre_empresa === empresaSolExcel);
+            let esValidoEmpresaSol = empresaSolEncontrado !== undefined;
+            if (esValidoEmpresaSol) {
+                filaExcel['id_empresa_solicitante'] = empresaSolEncontrado.id;
+            }
+
+            let fila_valida = true
+            const errores = {}
+            if (!esValidoTipoMuestra) {
+                //console.log(`Fila ${indice + 1}: Tipo de muestra no válido - ${tipoMuestraExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoEstacion) {
+                //console.log(`Fila ${indice + 1}: Tipo de estacionExcel no válido - ${estacionExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoParametro) {
+                //console.log(`Fila ${indice + 1}: Tipo de parametroExcel no válido - ${parametroExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoMatriz) {
+                //console.log(`Fila ${indice + 1}: Tipo de esValidoMatriz no válido - ${matrizExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoProyecto) {
+                //console.log(`Fila ${indice + 1}: Tipo de proyectoExcel no válido - ${proyectoExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoEmpresaCon) {
+                //console.log(`Fila ${indice + 1}: Tipo de empresaConExcel no válido - ${empresaConExcel}`);
+                fila_valida = false
+            }
+            if (!esValidoEmpresaSol) {
+                //console.log(`Fila ${indice + 1}: Tipo de empresaSolExcel no válido - ${empresaSolExcel}`);
+                fila_valida = false
+            }
+
+            errores['tipo_muestra'] = !esValidoTipoMuestra;
+            errores['estacion'] = !esValidoEstacion;
+            errores['parametro'] = !esValidoParametro;
+            errores['matriz'] = !esValidoMatriz;
+            errores['proyecto'] = !esValidoProyecto;
+            errores['empresa_contratante'] = !esValidoEmpresaCon;
+            errores['empresa_solicitante'] = !esValidoEmpresaSol;
+
+            if (!fila_valida) {
+                contador_errores = contador_errores + 1
+                const row = tbody.insertRow();
+                for (const key of columnOrder) {
+                    const cell = row.insertCell();
+                    cell.textContent = filaExcel[key] || '';
+                    if (errores[key]) {
+                        cell.classList.add('bg-danger');
+                    }
+                }
+            }
+        });
+
+        if (contador_errores == 0) {
+            botonInsertar.classList.remove('d-none');
+        } else {
+            botonInsertar.classList.add('d-none');
+        }
+        return datosExcel;
+    }
+
+    function actualizarMuestras(data) {
+        $.ajax({
+            url: urlSetMuestras,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (data) {
+                //toastr.success("Se cargo las muestras correctamente");
+            },
+            error: function (xhr, status, error) {
+                toastr.error(error);
+            }
+        });
+        console.log(data)
+    }
+
+    function agregarEstacion() {
+        $.ajax({
+            url: urlAgregarEstacion,
+            type: 'POST',
+            contentType: 'application/json',
+            success: async function (data) {
+                await runAnalizar();
+                toastr.success("Se agrego correctamente la estacion");
+            },
+            error: function (error) {
+                toastr.error("Ocurrio un error al crear estaciones");
+            }
+        });
+    }
+
+    function agregarProyecto() {
+        $.ajax({
+            url: urlAgregarProyecto,
+            type: 'POST',
+            contentType: 'application/json',
+            success: async function (data) {
+                await runAnalizar();
+                toastr.success("Se agrego correctamente el proyecto");
+            },
+            error: function (error) {
+                toastr.error("Ocurrio un error al crear proyectos");
+            }
+        });
+    }
+
+    function eliminarFila(id) {
+        $.ajax({
+            url: urlEliminarFila,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(id),
+            success: async function (data) {
+                console.log('Respuesta de la API:', data);
+                await runAnalizar();
+                toastr.success("Se elimino correctamente el fila");
+            },
+            error: function (error) {
+                console.error('Error:', error);
+            }
+        });
+    }
+
+    function insertar() {
+        $.ajax({
+            url: urlAgregarEstacion,
+            type: 'POST',
+            contentType: 'application/json',
+            success: async function (data) {
+                await runAnalizar();
+                toastr.success("Se agrego correctamente la estacion");
+            },
+            error: function (error) {
+                toastr.error("Ocurrio un error al crear estaciones");
+            }
+        });
+    }
+</script>

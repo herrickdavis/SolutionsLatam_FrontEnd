@@ -141,7 +141,8 @@
         $("#tablaProyectos tbody tr td:first-child").on("click", function () { event.stopPropagation(); });
         $(".chkDescargaMuestra").on("change", mostrarBotonDescargaMuestra);
         $(".chkDescargaProyecto").on("change", mostrarBotonDescargaProyecto);
-        //$("#tablaMuestras .chkSeleccionarTodo").on("change", seleccionarTodo);
+        $("#tablaEstaciones .chkSeleccionarTodo").on("change", seleccionarTodo);
+        $("#tablaProyectos .chkSeleccionarTodoProyecto").on("change", seleccionarTodoProyecto);
         //$("#divMuestras #ddlPaginado").on("change", obtenerTablaMuestra);
     }    
     var armarFiltros = function () {
@@ -245,6 +246,16 @@
         }
         mostrarBotonDescargaMuestra();
     }
+
+    var seleccionarTodoProyecto = function () {
+        if (this.checked) {
+            $(".chkDescargaProyecto").prop("checked", true);
+        }
+        else {
+            $(".chkDescargaProyecto").prop("checked", false);
+        }
+        mostrarBotonDescargaProyecto();
+    }
     
     var asignarAlias = function () {
         var id = [];
@@ -269,6 +280,8 @@
             .then(function (html) {
                 console.log(html)
                 obtenerTablaEstacion(page)
+                $(".btnLimpiarMuestra").hide("fast");
+                $(".btnDescargarMuestra").hide("fast");
             })
             .catch(error => {
                 console.log(error);
@@ -296,6 +309,8 @@
             .then(function (html) {
                 console.log(html)
                 obtenerTablaProyecto(page)
+                $(".btnLimpiarProyecto").hide("fast");
+                $(".btnDescargarProyecto").hide("fast");
             })
             .catch(error => {
                 console.log(error);
@@ -323,6 +338,8 @@
             .then(function (html) {
                 console.log(html)
                 obtenerTablaProyecto(page)
+                $(".btnLimpiarProyecto").hide("fast");
+                $(".btnDescargarProyecto").hide("fast");
             })
             .catch(error => {
                 console.log(error);
@@ -350,6 +367,8 @@
             .then(function (html) {
                 console.log(html)
                 obtenerTablaEstacion(page)
+                $(".btnLimpiarMuestra").hide("fast");
+                $(".btnDescargarMuestra").hide("fast");
             })
             .catch(error => {
                 console.log(error);
@@ -359,14 +378,15 @@
     var mostrarEstacion = function () {
         $("#divEstaciones").show("fast");
         mostrarBotonDescargaMuestra();
-        $(".btnDescargarCertificado").hide("fast");
-        $(".btnLimpiarMuestra").hide("fast");
+        $(".btnLimpiarProyecto").hide("fast");
+        $(".btnDescargarProyecto").hide("fast");
         $(".dropdown-btn-columnas").show("fast");
         $("#divProyectos").hide("fast");
     }
     var mostrarProyecto = function () {
         $("#divProyectos").show("fast");
-        //mostrarBotonDescargaCertificado();
+        mostrarBotonDescargaProyecto();
+        $(".btnLimpiarMuestra").hide("fast");
         $(".btnDescargarMuestra").hide("fast");
         $(".dropdown-btn-columnas").hide("fast");
         $("#divEstaciones").hide("fast");

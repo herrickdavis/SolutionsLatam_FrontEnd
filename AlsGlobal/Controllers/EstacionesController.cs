@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 namespace AlsGlobal.Controllers
 {
+    [Authorize]
     public class EstacionesController : MainController
     {
         private readonly IAllEstacionesService _allEstacionesService;

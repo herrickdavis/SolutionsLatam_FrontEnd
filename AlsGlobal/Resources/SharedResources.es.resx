@@ -561,4 +561,40 @@
   <data name="Estacion.Asignar" xml:space="preserve">
     <value>Asignar</value>
   </data>
+  <data name="Estaciones.LimpiarAlias" xml:space="preserve">
+    <value>Limpiar Alias</value>
+  </data>
+  <data name="Cadena.Editar" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Cadena.Eliminar" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="Cadena.VerificacionEliminar" xml:space="preserve">
+    <value>Advertencia</value>
+  </data>
+  <data name="Cadenas.Aceptar" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="Cadenas.cargar" xml:space="preserve">
+    <value>Cargar</value>
+  </data>
+  <data name="Cadenas.Cargarplantillas" xml:space="preserve">
+    <value>Cargar Plantillas</value>
+  </data>
+  <data name="Cadenas.EditaPlantilla" xml:space="preserve">
+    <value>Editar Plantilla</value>
+  </data>
+  <data name="Cadenas.ElegirEmpresa" xml:space="preserve">
+    <value>Seleccione la empresa</value>
+  </data>
+  <data name="Cadenas.Generar" xml:space="preserve">
+    <value>Generar Cadena</value>
+  </data>
+  <data name="Cadenas.Plantillas" xml:space="preserve">
+    <value>Plantillas de cadenas</value>
+  </data>
+  <data name="Muestras.Reporte" xml:space="preserve">
+    <value>Reporte</value>
+  </data>
 </root>

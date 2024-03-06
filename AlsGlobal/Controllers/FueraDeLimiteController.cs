@@ -37,7 +37,7 @@ namespace AlsGlobal.Controllers
     }
     public async Task<IActionResult> Index()
     {
-      ViewBag.TipoMuestra = await ObtenerMuestras(new DateTime(2019,12,31), DateTime.Now); 
+      ViewBag.TipoMuestra = await ObtenerMuestras(DateTime.Now.AddMonths(-1), DateTime.Now); 
       ViewBag.Estaciones = new List<SelectListItem>()
       {
         new SelectListItem(_stringLocalizer["ValorDefectoSelect"], null)

@@ -35,11 +35,14 @@
                     <!--end::Navigation-->
                     </div>
                 </div>
+                <button type="button" class="btn btn-info btnReporteMuestra mr-1">
+                    <i class="flaticon-download"></i> @SharedLocalizer["Muestras.Reporte"]
+                </button>
                 <button type="button" class="btn btn-info btnDescargarMuestra" data-toggle="modal" data-target="#modalDescarga" style="display:none;">
-                    <i class="flaticon-download"></i> @SharedLocalizer["Muestras.Descargar"]
+                    <i class="flaticon-download"></i> @SharedLocalizer["Muestras.Documentos"]
                 </button>
                 <button type="button" class="btn btn-info btnDescargarCertificado" style="display:none;">
-                    <i class="flaticon-download"></i> @SharedLocalizer["Muestras.Descargar"]
+                    <i class="flaticon-download"></i> @SharedLocalizer["Muestras.Documentos"]
                 </button>
                 <div class="dropdown dropdown-inline">
                     <a href="#" class="btn btn-icon-primary btn-clean btn-hover-light-primary btn-sm btn-icon" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -182,18 +185,78 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalReporte" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Muestras.Descargar"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="col-form-label">@SharedLocalizer["Muestras.Plantilla"]:</label>
+                    <div class="col-form-label">
+                        <select class="form-control" id="selectIdPlantilla">
+                        </select>
+                        <small id="emailHelp" class="form-text text-muted mt-2 ml-2"><a href="#" class="editLink">EDITAR</a> <a href="@Url.Action("index", "Edd")" class="ml-3">CREAR</a></small>
+                        <div class="row mt-5">
+                            <div class="col-6">
+                                <input class="form-control" type="text" id="numero_grupo" />
+                                <small id="emailHelp" class="form-text text-muted mt-2 ml-2">Numero Grupo (opcional)</small>
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" type="text" id="year_grupo"/>
+                                <small id="emailHelp" class="form-text text-muted mt-2 ml-2">Año Grupo (Opcional)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" id="descargar_reporte" class="btn btn-primary font-weight-bold">@SharedLocalizer["Muestras.Descargar"]</button>
+                <button class="btn btn-primary" type="button" id="descargando_activo" disabled style="display: none;">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    Descargando...
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts{
     <script>
         var urlMuestras = "@Url.Action("ObtenerMuestras", "Muestras")";
         var urlCertificados = "@Url.Action("ObtenerCertificados", "Muestras")";
         var urlDetalle = "@Url.Action("Detalle", "Muestras")";
+        var urlGetDocumentoEdd = "@Url.Action("GetDocumento", "Edd")";
         var urlGetDocumentosMuestra = "@Url.Action("GetDocumentosMuestra", "Muestras")";
         var urlGetDocumentoMuestra = "@Url.Action("GetDocumentoMuestra", "Muestras")";
         var urlObtenerParametros = "@Url.Action("ObtenerParametros", "Muestras")";
         var urlGetZipMuestra = "@Url.Action("GetZipMuestra", "Muestras")";
         var urlGetDocumentoInformes = "@Url.Action("GetDocumentoInformes", "Muestras")";
         var urlSetColumnasUsuario = "@Url.Action("SetColumnasUsuario", "Perfil")";
+        var urlObtenerEdd = "@Url.Action("ObtenerEdd", "Muestras")";
+        $(document).ready(function () {
+            $("#selectIdPlantilla").change(function () {
+                var selectedId = $(this).val(); // Obtener el valor seleccionado
+                $("#editLink").data('id', selectedId); // Actualizar el data-id del enlace
+            });
+
+            $(".editLink").click(function (event) {
+                var id = $('#selectIdPlantilla').val();
+                if(id.indexOf("E") > -1) {
+                    toastr.error("Plantilla Externa")
+                    return false
+                }
+                var url = "@Url.Action("Index", "Edd")" + "?id=" + id;  // Construir la URL
+                console.log(url)
+                window.location.href = url;  // Navegar a esa URL
+            });
+        })
     </script>
+        
 
     <script src="/js/muestras/muestras.js" asp-append-version="true"></script>
     <script src="/js/muestras/detalleMuestras.js" asp-append-version="true"></script>

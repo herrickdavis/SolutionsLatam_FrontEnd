@@ -2,7 +2,7 @@
 @inject IStringLocalizer<SharedResources> SharedLocalizer
 @{ 
   string currentController = ViewContext.RouteData.Values["Controller"].ToString();
-  int id  = Convert.ToInt32(ViewContext.RouteData.Values["id"]?.ToString());
+    int id = Convert.ToInt32(ViewContext.RouteData.Values["id"]?.ToString() ?? "-1");
 }
 
 <div id="kt_header_menu" class="header-menu header-menu-left header-menu-mobile header-menu-layout-default ">

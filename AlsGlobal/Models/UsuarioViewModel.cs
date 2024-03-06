@@ -21,6 +21,7 @@ namespace AlsGlobal.Models
     public string email { get; set; }
     public int rol { get; set; }
     public string data_campo{get;set;}
+    public string region { get; set; }
     public IEnumerable<MenuViewModel> menu { get; set; }
     public string token { get; set; }
     public ResponseResult ResponseResult { get; set; }
@@ -69,6 +70,7 @@ namespace AlsGlobal.Models
     public string idioma { get; set; }
     [Required(ErrorMessage = "El Data Campo es obligatorio")]
     public string data_campo { get; set; }
+    public string region { get; set; }
     public string ver_empresa_solicitante { get; set; }
     public string ver_contacto_solicitante { get; set; }
     public string ver_empresa_contratante { get; set; }
@@ -95,6 +97,7 @@ namespace AlsGlobal.Models
     public string idioma { get; set; }
      [Required(ErrorMessage = "El Data Campo es obligatorio")]
     public string data_campo { get; set; }
+    public string region { get; set; }
     public string ver_empresa_sol { get; set; }
     public string ver_contacto_sol { get; set; }
     public string ver_empresa_con { get; set; }

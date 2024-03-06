@@ -1,6 +1,9 @@
 ﻿using AlsGlobal.Extensions;
 using AlsGlobal.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -16,6 +19,7 @@ namespace AlsGlobal.Services
     Task<IEnumerable<DocumentoMuestraViewModel>> GetDocumentosMuestra(DocumentoMuestraRequestViewModel request);
     Task<ArchivoViewModel> GetDocumentoMuestra(DocumentoMuestraRequestViewModel request);
     Task<ArchivoViewModel> GetZipMuestra(DocumentoMuestraRequestViewModel request);
+    Task<JArray> ObtenerEdd();
   }
   public class MuestrasService : Service, IMuestrasService
   {
@@ -114,5 +118,17 @@ namespace AlsGlobal.Services
       var result = await DeserializarArchivoResponse(response);
       return new ArchivoViewModel(response.Content.Headers.ContentType.MediaType, response.Content.Headers.ContentDisposition?.FileName, result);//result;
     }
-  }
+
+    public async Task<JArray> ObtenerEdd()
+    {
+            string cultura = ObtenerCultura(_httpContext);
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _aspNetUser.ObtenerToken());
+            _httpClient.DefaultRequestHeaders.Add("culture", cultura); _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            var response = await _httpClient.PostAsync("GetPlanillaEdd", null);
+            var contentString = await response.Content.ReadAsStringAsync();
+            var result = JArray.Parse(contentString);
+
+            return result;
+        }
+    }
 }

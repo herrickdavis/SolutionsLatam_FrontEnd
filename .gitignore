@@ -1,1 +1,8 @@
-AlsGlobal/bin/Release/net5.0/publish.rar
+AlsGlobal/bin/Release/net5.0/
+.vs/
+AlsGlobal/.config/
+AlsGlobal/obj/
+AlsGlobal/bin/
+*.user
+*.userosscache
+*.suo

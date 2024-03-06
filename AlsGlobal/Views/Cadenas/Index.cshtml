@@ -14,15 +14,32 @@
                 </h3>
             </div>
             <div class="form-inline">
-                <div class="card-toolbar mr-5">
-                    <select class="form-control selectpicker" aria-label="Default select example">
-                        <option value="1">Sin Muestras, sin Parametros</option>
-                        <option value="2">Con muestras y Parametros</option>
+                <div class="card-toolbar mr-5" style="min-width:180px">
+                    <select class="form-control w-100 selectpicker" aria-label="Default select example" id="id_plantilla">
+                        @foreach (var item in ViewBag.Plantillas)
+                        {
+                            <option value="@item["id"].Value">@item["nombre_plantilla"].Value</option>
+                        }
                     </select>
                 </div>
-                <div class="card-toolbar">
+                <div class="card-toolbar mr-5">
                     <button type="button" class="btn btn-info btnDescargarCOC">
                         <i class="flaticon-interface-10"></i> @SharedLocalizer["Cadenas.Generar"]
+                    </button>
+                </div>
+                <div class="card-toolbar mr-5">
+                    <button type="button" class="btn btn-success btnCargarPlantilla" data-toggle="modal" data-tipo="proyecto" data-target="#modalPlantilla">
+                        <i class="flaticon-eye"></i>
+                    </button>
+                </div>
+                <div class="card-toolbar mr-5">
+                    <button type="button" class="btn btn-success btnCargarPlantilla" data-toggle="modal" data-tipo="proyecto" data-target="#modalCargarPlantilla">
+                        <i class="flaticon-upload"></i>
+                    </button>
+                </div>
+                <div class="card-toolbar">
+                    <button type="button" class="btn btn-primary btnCargarPlantilla" data-toggle="modal" data-tipo="proyecto" data-target="#modalEmpresa">
+                        <i class="flaticon-network"></i>
                     </button>
                 </div>
             </div>
@@ -34,10 +51,173 @@
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="modalPlantilla" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Cadenas.Plantillas"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre Plantilla</th>
+                            <th scope="col" class="text-center">Archivo</th>
+                            <th scope="col" class="text-center">Editar</th>
+                            <th scope="col" class="text-center">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewBag.Plantillas)
+                        {
+                            <tr>
+                                <th scope="row">@item["id"].Value</th>
+                                <td>@item["nombre_plantilla"].Value</td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer;" onclick="descargarPlantilla(@item["id"].Value);">
+                                        <i class="flaticon-download"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer;" class="editar_plantilla" data-id="@item["id"].Value" data-nombre="@item["nombre_plantilla"].Value">
+                                        <i class="flaticon-edit"></i>
+                                    </a>
+                                </td>
+                                <td class="text-center">
+                                    <a style="cursor: pointer;" data-id="@item["id"].Value" data-nombre="@item["nombre_plantilla"].Value" class="btnEliminarPlantilla">
+                                        <i class="flaticon-delete"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalCargarPlantilla" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Cadenas.Cargarplantillas"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Nombre Plantilla</label>
+                    <input type="email" class="form-control" id="nombre_plantilla" aria-describedby="emailHelp" autocomplete="off">
+                </div>
+                <input type="file" class="form-control-file" id="archivo_plantilla">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-primary font-weight-bold" onclick="cargarPlantilla()">@SharedLocalizer["Cadenas.cargar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalVerificar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Cadena.VerificacionEliminar"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Estas seguro de eliminar la plantilla: <span class="textoPlantillaEliminar"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-danger font-weight-bold btnConfirmarEliminacion" data-id="">@SharedLocalizer["Cadena.Eliminar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Cadenas.EditaPlantilla"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-6">
+                        <input type="text" class="form-control" id="idPlantilla" style="display:none">
+                        <input type="text" class="form-control" id="nombrePlantilla">
+                    </div>
+                    <div class="col-6 d-flex align-items-center">
+                        <input type="file" class="form-control-file" id="editar_archivo_plantilla">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-success font-weight-bold" id="editarPlantilla">@SharedLocalizer["Cadena.Editar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalEmpresa" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">@SharedLocalizer["Cadenas.ElegirEmpresa"]</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-3">
+                        <select class="form-control" id="regiones">
+                            <option value="1" selected>Perú</option>
+                            <option value="2">Argentina</option>
+                            <option value="3">Brasil</option>
+                            <option value="4">Chile</option>
+                            <option value="5">Ecuador</option>
+                            <option value="6">República Dominicana</option>
+                            <option value="7">México</option>
+                            <option value="8">Colombia</option>
+                        </select>
+                    </div>
+                    <div class="col-9 d-flex align-items-center">
+                        <select id="id_empresa" class="form-control selectpicker" data-size="5" data-live-search="true" data-hide-disabled="true" data-show-selectAll="true" data-actions-box="true" multiple="multiple" title=@SharedLocalizer["ValorDefectoSelect"]>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">@SharedLocalizer["Muestras.Cerrar"]</button>
+                <button type="button" class="btn btn-success font-weight-bold" id="SeleccionEmpresa">@SharedLocalizer["Cadenas.Aceptar"]</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section scripts{
     <script>
         var urlGenerarCadena = "@Url.Action("ObtenerCadenas", "Cadenas")";
+        var urlDescargarPlantilla = "@Url.Action("ObtenerArchivoPlantilla", "Cadenas")";
+        var urlEliminarArchivo = "@Url.Action("EliminarArchivoPlantilla", "Cadenas")";
+        var urlObtenerPlantillas = "@Url.Action("ObtenerPlantillas", "Cadenas")";
+        var urlCargarPlantilla = "@Url.Action("CargarArchivoPlantilla", "Cadenas")";
+        var urlEditarPlantilla = "@Url.Action("EditarPlantilla", "Cadenas")";
+        var urlObtenerEmpresas = "@Url.Action("ObtenerEmpresas", "Cadenas")";
+        var urlObtenerDataCOC = "@Url.Action("GetPaginacionCadenas", "Cadenas")";
 
         var urlEstacionesAsignar = "@Url.Action("AsignarAlias", "Estaciones")";
         var urlDetalle = "@Url.Action("Detalle", "Muestras")";
