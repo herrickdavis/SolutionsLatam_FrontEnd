@@ -109,3 +109,54 @@
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
 }
+
+.card.card-custom > .telemetria-mapa.card-body {
+    padding: 0px !important;
+}
+
+.card.card-custom > .telemetria-grafico.card-body {
+    padding: 0px !important;
+}
+.scrollable-column {
+    max-height: 80vh; /* Ajusta esto según tus necesidades */
+    overflow-y: auto; /* Muestra una barra de desplazamiento vertical si es necesario */
+}
+
+.expanded {
+    position: fixed !important;
+    top: 10%;
+    left: 10%;
+    width: 80%;
+    height: 80% !important;
+    z-index: 1000;
+    overflow: auto; /* Asegúrate de que el contenido es accesible en pantallas pequeñas */
+}
+
+.notification {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa; /* Color de fondo ligero para cada notificación */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.notification-time {
+    text-align: right;
+    font-size: 0.8rem;
+}
+
+.text-peligro {
+    color: #F64E60 !important;
+}
+
+#grupo_parametros2 {
+    width: 100% !important;
+}
+
+.sortable_parametros {
+    max-height: 400px; /* Ajusta esto según la altura deseada */
+    overflow-y: auto; /* Habilita el desplazamiento vertical */
+    overflow-x: hidden; /* Oculta el desplazamiento horizontal */
+
+}
+

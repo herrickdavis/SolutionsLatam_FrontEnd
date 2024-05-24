@@ -1,0 +1,289 @@
+﻿@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+}
+<div class="row">
+    <div class="col-3">
+        <div class="card card-custom gutter-b">
+            <div class="card-header">
+                <div class="card-title">
+                    @SharedLocalizer["Telemetria.Filtro"]
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <!--<label> @SharedLocalizer["TipoData"] </label>-->
+                    <select class="form-control">
+                        <option>Data Válida</option>
+                        <option>Data Cruda</option>
+                    </select>
+                    <small id="emailHelp" class="form-text text-muted">@SharedLocalizer["TipoData"]</small>
+                </div>
+                <div class="form-group">
+                    <!--<label> @SharedLocalizer["Estacion"] </label>-->
+                    <select class="form-control" id="estaciones" multiple="multiple">
+                    </select>
+                    <small id="emailHelp" class="form-text text-muted">@SharedLocalizer["Estacion"]</small>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="grupos">
+                        <option disabled selected>Seleccionar grupo</option>
+                    </select>
+                    <small class="form-text text-muted">@SharedLocalizer["GrupoParametros"] <span class="ml-3 text-primary" id="crear" style="cursor: pointer;">Crear</span><span class="ml-3 text-primary" id="editar" style="cursor: pointer;">Editar</span></small>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="limites">
+                        <option disabled selected>Seleccionar Limite</option>
+                    </select>
+                    <small id="emailHelp" class="form-text text-muted">@SharedLocalizer["Limites"] <span class="ml-3 text-primary" id="crearLimite" style="cursor: pointer;">Crear</span><span class="ml-3 text-primary" id="editarLimite" style="cursor: pointer;">Editar</span></small>
+                </div>
+                <div class="form-group">
+                    <select class="form-control" id="grupo_parametros" multiple="multiple">
+                    </select>
+                    <small id="emailHelp" class="form-text text-muted">@SharedLocalizer["Parametro"]</small>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-primary" id="generar">Generar gráficas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-9" >
+        <div class="card card-custom gutter-b pb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title">
+                    @SharedLocalizer["Telemetria.RangoFecha"]
+                </div>
+                <select class="form-control" style="width: auto; max-width: 200px;">
+                    <option value="option1">7 dias</option>
+                    <option value="option2">30 dias</option>
+                    <option value="option3">1 año</option>
+                </select>
+            </div>
+            <div id="range_fecha" style="height:60px"></div>
+            
+        </div>
+        <div class="row">
+            <ul class="nav nav-tabs" id="myTab" role="tablist" style="padding-left: 12.5px;">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" data-target="#grafica1" type="button" role="tab" aria-controls="home" aria-selected="true">Graficas 1</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" data-target="#grafica2" type="button" role="tab" aria-controls="profile" aria-selected="false">Gráficas 2</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" data-target="#grafica3" type="button" role="tab" aria-controls="profile" aria-selected="false">Gráficas 3</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" data-target="#grafica4" type="button" role="tab" aria-controls="profile" aria-selected="false">Gráficas 4</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" data-target="#grafica5" type="button" role="tab" aria-controls="profile" aria-selected="false">Gráficas 5</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-12">
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="grafica1" role="tabpanel" aria-labelledby="grafica-1">
+                    <div class="row">
+                        <div class="col-12 scrollable-column" id="contenedorPrincipal"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="grafica2" role="tabpanel" aria-labelledby="grafica-2">
+                    <div class="row">
+                         <div class="col-12 scrollable-column" id="contenedorPrincipal2"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="grafica3" role="tabpanel" aria-labelledby="grafica-3">
+                    <div class="row">
+                        <div class="col-12 scrollable-column" id="contenedorPrincipal3"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="grafica4" role="tabpanel" aria-labelledby="grafica-4">
+                    <div class="row">
+                        <div class="col-12 scrollable-column" id="contenedorPrincipal4"></div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="grafica5" role="tabpanel" aria-labelledby="grafica-5">
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <select id="selectMes" class="form-control mb-3 col-5">
+                                <option value="0">Enero</option>
+                                <option value="1">Febrero</option>
+                                <option value="2">Marzo</option>
+                                <option value="3" selected>Abril</option>
+                                <option value="4">Mayo</option>
+                                <option value="5">Junio</option>
+                                <option value="6">Julio</option>
+                                <option value="7">Agosto</option>
+                                <option value="8">Septiembre</option>
+                                <option value="9">Octubre</option>
+                                <option value="10">Noviembre</option>
+                                <option value="11">Diciembre</option>
+                            </select>
+                            <div class="scrollable-column" id="contenedorPrincipal5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal Crear Grupo-->
+    <div class="modal fade" id="modalCrear" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Grupo parámetros</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="col-3 col-form-label"><b>Nombre grupo parámetro:</b></label>
+                        <div class="col-5">
+                            <input type="text" class="form-control" id="nombre_grupo">
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-md-6">
+                            <h4 class="card-title mb-1">Parámetros disponibles</h4>
+                            <div class="card">
+                                <div class="card-body sortable_parametros">
+                                    <ul id="sortable1" class="connectedSortable list-group list-unstyled multi-columns">
+                                        <li class="ui-state-default" id="codigo_muestra"><div class="list-group-item list-group-item-primary" role="alert">Codigo de Muestra</div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="card-title mb-1">Parámetros seleccionados</h4>
+                            <div class="card">
+                                <div class="card-body sortable_parametros">
+                                    <ul id="sortable2" class="connectedSortable list-unstyled" style="min-height:200px">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary" id="guardar_grupo">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal grafica-->
+<div class="modal fade" id="graficoModal" tabindex="-1" aria-labelledby="graficoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <!-- modal-xl para un modal más grande -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="graficoModalLabel">Gráfica Expandida</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí irá la gráfica clonada -->
+                <div id="modalGraficoContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Crear Limite-->
+<div class="modal fade" id="crearLimiteModal" tabindex="-1" aria-labelledby="crearLimiteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <!-- modal-xl para un modal más grande -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="graficoModalLabel">Crear Límites</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="rowsContainer">
+                <div class="row">
+                    <label class="col-2 col-form-label"><b>Nombre Límite:</b></label>
+                    <div class="col-5">
+                        <input type="text" class="form-control" id="nombre_limite">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-4">
+                        <p class="text-center"><b>Parametro</b></p>
+                    </div>
+                    <div class="col-4">
+                        <p class="text-center"><b>Límite Inferior</b></p>
+                    </div>
+                    <div class="col-4">
+                        <p class="text-center"><b>Límite Superior</b></p>
+                    </div>
+                </div>
+                <div class="row" id="rowTemplate">
+                    <div class="col-4">
+                        <select class="form-control grupo_parametros2">
+                            <option disabled selected>Seleccionar grupo</option>
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control limite_inferior" dir="rtl" />
+                    </div>
+                    <div class="col-4">
+                        <input class="form-control limite_superior" dir="rtl" />
+                    </div>
+                    <input type="hidden" class="row-index fila" value="1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" id="showNextRowButton">Añadir Fila</button>
+                <button type="button" class="btn btn-success" id="guardar_limite">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Editar Limite-->
+<div class="modal fade" id="graficoModal" tabindex="-1" aria-labelledby="graficoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <!-- modal-xl para un modal más grande -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="graficoModalLabel">Gráfica Expandida</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí irá la gráfica clonada -->
+                <div id="modalGraficoContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var urlGetInfoTelemetria = "@Url.Action("GetInfo", "Telemetria")"
+            var urlGetDataWindRoseTelemetria = "@Url.Action("GetDateWindRose", "Telemetria")"
+        var urlGetDataTelemetria = "@Url.Action("GetData", "Telemetria")"
+        var urlGetAllParametroTelemetria = "@Url.Action("GetAllParametro", "Telemetria")"
+        var urlGetAllGrupoParametroTelemetria = "@Url.Action("GetAllGrupo", "Telemetria")"
+        var urlGetAllStationTelemetria = "@Url.Action("GetAllStation", "Telemetria")"
+        var urlSetLimiteTelemetria = "@Url.Action("SetLimite", "Telemetria")"
+        var urlGetAllLimiteTelemetria = "@Url.Action("GetAllLimite", "Telemetria")"
+        var urlSetGrupoParametrosTelemetria = "@Url.Action("SetGrupoParametros", "Telemetria")"
+        
+    </script>
+    <script src="/js/telemetria/telemetria.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/density-clustering@1.3.0/lib/KMEANS.min.js"></script>
+}

@@ -1,0 +1,152 @@
+﻿@inject IStringLocalizer<SharedResources> SharedLocalizer
+@{
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card card-custom gutter-b">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-title">
+                    @SharedLocalizer["Telemetria.Criterios"]
+                </div>
+                <div>
+                    <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-plus"></i> Agregar</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col">Variable(s)</th>
+                            <th scope="col">Criterio</th>
+                            <th scope="col">Aplicacion</th>
+                            <th scope="col">Editar</th>
+                            <th scope="col">Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Condiciones de operatividad</td>
+                            <td>Flujo de bomba del analizador de CO</td>
+                            <td>CO_FLOW_Avg</td>
+                            <td>>0.350</td>
+                            <td>[CO_FLOW_Avg] > 0.350</td>
+                            <td><i class="fas fa-pencil-alt text-primary" data-toggle="modal" data-target="#exampleModal"></i></td>
+                            <td><i class="fas fa-trash-alt text-peligro" data-toggle="modal" data-target="#eliminarModal"></i></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Descarte</td>
+                            <td>Lectura de la concentracion CO promedio</td>
+                            <td>CO_Avg (1 hora)</td>
+                            <td>CO_Avg < 45 min</td>
+                            <td>[CO_Avg] < 45</td>
+                            <td><i class="fas fa-pencil-alt text-primary"></i></td>
+                            <td><i class="fas fa-trash-alt text-peligro"></i></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Descarte</td>
+                            <td>Lectura de la concentracion CO promedio</td>
+                            <td>CO_AGC_INT_Avg</td>
+                            <td>150000 - 300000 Hz</td>
+                            <td>[CO_AGC_INT_Avg] > 150000 & [CO_AGC_INT_Avg] < 300000</td>
+                            <td><i class="fas fa-pencil-alt text-primary"></i></td>
+                            <td><i class="fas fa-trash-alt text-peligro"></i></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">4</th>
+                            <td>Alerta</td>
+                            <td>Valores menores al 75% durante 24 horas</td>
+                            <td>CO (ppb), SO2(ppb)</td>
+                            <td>Valores  < 75% de 24 horas</td>
+                            <td>[CO_Avg] < 0.75.Avg[CO_Avg]</td>
+                            <td><i class="fas fa-pencil-alt text-primary"></i></td>
+                            <td><i class="fas fa-trash-alt text-peligro"></i></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">5</th>
+                            <td>Descarte</td>
+                            <td>Lectura de humedad del ambiente de PM2.5</td>
+                            <td>PM25_AMB_RH_Avg</td>
+                            <td>Valores negativos</td>
+                            <td>[PM25_AMB_RH_Avg] < 0</td>
+                            <td><i class="fas fa-pencil-alt text-primary"></i></td>
+                            <td><i class="fas fa-trash-alt text-peligro"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Agregar -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Agregar criterio de validación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Tipo</label>
+                        <select class="form-control">
+                            <option>Alerta</option>
+                            <option>Descarte</option>
+                            <option>Condicion de Operatividad</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Descripcion</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Variables</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Criterio</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Aplicacion Criterio</label>
+                        <input type="password" class="form-control" id="exampleInputPassword1">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="modal fade" id="eliminarModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Estas seguro que deseas eliminar el criterio de validación?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>

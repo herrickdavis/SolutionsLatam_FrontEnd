@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using AlsGlobal.Configurations;
 using Microsoft.AspNetCore.HttpOverrides;
 using static AlsGlobal.Services.IDataExternaService;
+using static AlsGlobal.Services.ITelemetriaService;
+using static AlsGlobal.Services.INotificacionService;
 
 namespace AlsGlobal
 {
@@ -54,6 +56,8 @@ namespace AlsGlobal
       services.AddHttpClient<ICadenasService, CadenasService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddHttpClient<IDataExternaService, DataExternaService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddHttpClient<IEddService, EddService>(x => x.BaseAddress = new Uri(baseAddress));
+      services.AddHttpClient<ITelemetriaService, TelemetriaService>(x => x.BaseAddress = new Uri(baseAddress));
+      services.AddHttpClient<INotificacionService, NotificacionService>(x => x.BaseAddress = new Uri(baseAddress));
       services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
       services.AddScoped<IAspNetUser, AspNetUser>();
       services.AddScoped<IRolService, RolService>();
