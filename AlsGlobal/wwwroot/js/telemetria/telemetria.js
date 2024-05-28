@@ -109,6 +109,19 @@
 
         return ranges;
     }
+    var dataCache = null;
+    var cargarDatos = function (payload, callback) {
+        if (dataCache) {
+            callback(dataCache);
+        } else {
+            $.post(urlGetDataTelemetria, payload)
+                .then(response => {
+                    dataCache = response;
+                    callback(response);
+                })
+                .catch(error => console.log(error));
+        }
+    };
     var charts2 = [];
     var grafica2 = function () {
         $('#contenedorPrincipal2').empty();
@@ -186,7 +199,7 @@
                     todasLasFechas.push(item.fecha_muestreo);
                 });
                 var fechasUnicas = Array.from(new Set(todasLasFechas));
-                agregarRangoFecha(fechasUnicas)
+                //agregarRangoFecha(fechasUnicas)
                 parametro_ids.forEach(parametro_id => {
                     var halfHeight = (window.innerHeight - 60) / 2;
                     document.querySelectorAll('.half-screen').forEach(function (element) {
@@ -288,7 +301,7 @@
 
                     chart2.setOption(option);
                 });
-                syncDataZoomFromMaster('range_fecha');
+                //syncDataZoomFromMaster('range_fecha');
             })
             .catch(error => console.log(error));
     }
@@ -303,145 +316,139 @@
             nombre_estacion : estacionSeleccionados,
             id_parametros : id_parametros
         }
-        $.post(urlGetDataTelemetria, payload)
-            .then(response => {
-                var datos = response
-                var datosAgrupados = datos.reduce((acc, valorActual) => {
-                    (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+        cargarDatos(payload, function (datos) {
+            var datosAgrupados = datos.reduce((acc, valorActual) => {
+                (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                return acc;
+            }, {});
+
+            var numeroDeParametros = Object.keys(datosAgrupados).length;
+            var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
+            for (let fila = 0; fila < numeroDeFilas; fila++) {
+                var $row = $('<div>').addClass('row');
+
+                for (let col = 0; col < 2; col++) {
+                    var indice = fila * 2 + col;
+                    var parametro_ids = Object.keys(datosAgrupados);
+                    if (indice < parametro_ids.length) {
+                        var parametro_id = parametro_ids[indice];
+                        var $col = $('<div>').addClass('col-6');
+                        var $card = $('<div>').addClass('card card-custom gutter-b');
+                        var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
+                        $cardBody.attr('id', `grafico${parametro_id}`);
+
+                        // Ícono de FontAwesome como botón de expandir
+                        var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico${parametro_id}`);
+                        // Añade estilos para hacer el ícono interactivo, si es necesario
+                        $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
+
+                        // Crea el header del card con el título y el ícono de expandir
+                        var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
+                        var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
+                        $cardHeader.append($title).append($iconExpandir);
+
+                        // Añade el header y el body al card
+                        $card.append($cardHeader).append($cardBody);
+                        $col.append($card);
+                        $row.append($col);
+                    }
+                }
+                $('#contenedorPrincipal').append($row);
+            }
+            $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                var modalChartContainer = document.getElementById('modalGraficoContainer');
+                //modalChartContainer.innerHTML = ''; // Limpia el contenedor
+                modalChartContainer.style.height = '400px'; // Asegura que el contenedor tenga un tamaño
+
+                // Inicializa la gráfica en el modal solo si modalChartOption está definida
+                if (modalChartOption) {
+                    var modalChartInstance = echarts.init(modalChartContainer);
+                    modalChartInstance.setOption(modalChartOption, true); // Aplica las opciones del gráfico seleccionado
+                }
+            });
+
+            $(document).on('click', '.btn-expandir', function () {
+                var chartId = $(this).data('target');
+                var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
+                modalChartOption = originalChartInstance.getOption(); // Actualiza las opciones de la gráfica seleccionada para expandir
+                $('#graficoModal').modal('show'); // Muestra el modal
+            });
+
+            var todasLasFechas = [];
+
+            datos.forEach(item => {
+                todasLasFechas.push(item.fecha_muestreo);
+            });
+            var fechasUnicas = Array.from(new Set(todasLasFechas));
+            agregarRangoFecha(fechasUnicas)
+            parametro_ids.forEach(parametro_id => {
+                var halfHeight = (window.innerHeight - 60) / 2;
+                document.querySelectorAll('.half-screen').forEach(function (element) {
+                    element.style.height = `${halfHeight}px`;
+                });
+
+                var chartDom = document.getElementById('grafico' + parametro_id);
+                var chart1 = echarts.init(chartDom);
+                charts1.push(chart1);
+                var series = [];
+                var legendData = [];
+
+                var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
+                    if (!acc[item.nombre_estacion]) {
+                        acc[item.nombre_estacion] = [];
+                    }
+                    acc[item.nombre_estacion].push([item.fecha_muestreo, item.resultado]);
                     return acc;
                 }, {});
 
-                var numeroDeParametros = Object.keys(datosAgrupados).length;
-                var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
-                for (let fila = 0; fila < numeroDeFilas; fila++) {
-                    var $row = $('<div>').addClass('row');
-
-                    for (let col = 0; col < 2; col++) {
-                        var indice = fila * 2 + col;
-                        var parametro_ids = Object.keys(datosAgrupados);
-                        if (indice < parametro_ids.length) {
-                            var parametro_id = parametro_ids[indice];
-                            var $col = $('<div>').addClass('col-6');
-                            var $card = $('<div>').addClass('card card-custom gutter-b');
-                            var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
-                            $cardBody.attr('id', `grafico${parametro_id}`);
-
-                            // Ícono de FontAwesome como botón de expandir
-                            var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico${parametro_id}`);
-                            // Añade estilos para hacer el ícono interactivo, si es necesario
-                            $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
-
-                            // Crea el header del card con el título y el ícono de expandir
-                            var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
-                            var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
-                            $cardHeader.append($title).append($iconExpandir);
-
-                            // Añade el header y el body al card
-                            $card.append($cardHeader).append($cardBody);
-                            $col.append($card);
-                            $row.append($col);
-                        }
-                    }
-                    $('#contenedorPrincipal').append($row);
-                }
-                $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
-                    var modalChartContainer = document.getElementById('modalGraficoContainer');
-                    //modalChartContainer.innerHTML = ''; // Limpia el contenedor
-                    modalChartContainer.style.height = '400px'; // Asegura que el contenedor tenga un tamaño
-
-                    // Inicializa la gráfica en el modal solo si modalChartOption está definida
-                    if (modalChartOption) {
-                        var modalChartInstance = echarts.init(modalChartContainer);
-                        modalChartInstance.setOption(modalChartOption, true); // Aplica las opciones del gráfico seleccionado
-                    }
-                });
-
-                $(document).on('click', '.btn-expandir', function () {
-                    var chartId = $(this).data('target');
-                    var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
-                    modalChartOption = originalChartInstance.getOption(); // Actualiza las opciones de la gráfica seleccionada para expandir
-                    $('#graficoModal').modal('show'); // Muestra el modal
-                });
-
-                var todasLasFechas = [];
-
-                datos.forEach(item => {
-                    todasLasFechas.push(item.fecha_muestreo);
-                });
-                var fechasUnicas = Array.from(new Set(todasLasFechas));
-                agregarRangoFecha(fechasUnicas)
-                parametro_ids.forEach(parametro_id => {
-                    var halfHeight = (window.innerHeight - 60) / 2;
-                    document.querySelectorAll('.half-screen').forEach(function (element) {
-                        element.style.height = `${halfHeight}px`;
+                Object.keys(datosPorEstacion).forEach(nombre_estacion => {
+                    series.push({
+                        name: nombre_estacion,
+                        type: 'line',
+                        data: datosPorEstacion[nombre_estacion],
+                        symbol: 'none',
+                        sampling: 'average',
+                        smooth: true,
                     });
-
-                    var chartDom = document.getElementById('grafico' + parametro_id);
-                    var chart1 = echarts.init(chartDom);
-                    charts1.push(chart1);
-                    var series = [];
-                    var legendData = [];
-
-                    var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
-                        if (!acc[item.nombre_estacion]) {
-                            acc[item.nombre_estacion] = [];
-                        }
-                        acc[item.nombre_estacion].push([item.fecha_muestreo, item.resultado]);
-                        return acc;
-                    }, {});
-
-                    Object.keys(datosPorEstacion).forEach(nombre_estacion => {
-                        series.push({
-                            name: nombre_estacion,
-                            type: 'line',
-                            data: datosPorEstacion[nombre_estacion],
-                            symbol: 'none',
-                            sampling: 'average',
-                            smooth: true,
-                        });
-                        legendData.push(nombre_estacion);
-                    });
-
-                    var option = {
-                        title: {
-                            //text: datosAgrupados[parametro_id][0].nombre_parametro // Ejemplo de título
-                        },
-                        tooltip: {
-                            trigger: 'axis',
-                            position: function (pt) {
-                                return [pt[0], '10%'];
-                            }
-                        },
-                        toolbox: {
-                        },
-                        legend: {
-                            data: legendData
-                        },
-                        xAxis: {
-                            type: 'time',
-                            boundaryGap: false,
-                        },
-                        yAxis: {
-                            type: 'value'
-                        },
-                        dataZoom: [
-                            {
-                                type: 'inside',
-                                start: 80,
-                                end: 100
-                            },
-                            {
-                                start: 0,
-                                end: 20
-                            }
-                        ],
-                        series: series
-                    };
-                    chart1.setOption(option);
+                    legendData.push(nombre_estacion);
                 });
-                syncDataZoomFromMaster('range_fecha');
-            })
-            .catch(error => console.log(error));
+
+                var option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function (pt) {
+                            return [pt[0], '10%'];
+                        }
+                    },
+                    toolbox: {
+                    },
+                    legend: {
+                        data: legendData
+                    },
+                    xAxis: {
+                        type: 'time',
+                        boundaryGap: false,
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    dataZoom: [
+                        {
+                            type: 'inside',
+                            start: 80,
+                            end: 100
+                        },
+                        {
+                            start: 80,
+                            end: 100
+                        }
+                    ],
+                    series: series
+                };
+                chart1.setOption(option);
+            });
+            syncDataZoomFromMaster('range_fecha');
+        });
     }
     var charts3 = []
     var grafica3 = function () {
@@ -454,138 +461,135 @@
             nombre_estacion: estacionSeleccionados,
             id_parametros: id_parametros
         };
-        $.post(urlGetDataTelemetria, payload)
-            .then(response => {
-                var datos = response;
-                var datosAgrupados = datos.reduce((acc, valorActual) => {
-                    (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+        cargarDatos(payload, function (datos) {
+            var datosAgrupados = datos.reduce((acc, valorActual) => {
+                (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                return acc;
+            }, {});
+
+            var numeroDeParametros = Object.keys(datosAgrupados).length;
+            var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
+            for (let fila = 0; fila < numeroDeFilas; fila++) {
+                var $row = $('<div>').addClass('row');
+
+                for (let col = 0; col < 2; col++) {
+                    var indice = fila * 2 + col;
+                    var parametro_ids = Object.keys(datosAgrupados);
+                    if (indice < parametro_ids.length) {
+                        var parametro_id = parametro_ids[indice];
+                        var $col = $('<div>').addClass('col-6');
+                        var $card = $('<div>').addClass('card card-custom gutter-b');
+                        var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
+                        $cardBody.attr('id', `grafico3${parametro_id}`);
+
+                        // Ícono de FontAwesome como botón de expandir
+                        var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico3${parametro_id}`);
+                        $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
+
+                        // Crea el header del card con el título y el ícono de expandir
+                        var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
+                        var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
+                        $cardHeader.append($title).append($iconExpandir);
+
+                        // Añade el header y el body al card
+                        $card.append($cardHeader).append($cardBody);
+                        $col.append($card);
+                        $row.append($col);
+                    }
+                }
+                $('#contenedorPrincipal3').append($row);
+            }
+            $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                var modalChartContainer = document.getElementById('modalGraficoContainer');
+                modalChartContainer.style.height = '400px';
+
+                if (modalChartOption) {
+                    var modalChartInstance = echarts.init(modalChartContainer);
+                    modalChartInstance.setOption(modalChartOption, true);
+                }
+            });
+
+            $(document).on('click', '.btn-expandir', function () {
+                var chartId = $(this).data('target');
+                var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
+                modalChartOption = originalChartInstance.getOption();
+                $('#graficoModal').modal('show');
+            });
+
+            var todasLasFechas = [];
+            datos.forEach(item => {
+                todasLasFechas.push(item.fecha_muestreo);
+            });
+            var fechasUnicas = Array.from(new Set(todasLasFechas));
+            //agregarRangoFecha(fechasUnicas);
+
+            parametro_ids.forEach(parametro_id => {
+                var halfHeight = (window.innerHeight - 60) / 2;
+                document.querySelectorAll('.half-screen').forEach(function (element) {
+                    element.style.height = `${halfHeight}px`;
+                });
+
+                var chartDom = document.getElementById('grafico3' + parametro_id);
+                var chart3 = echarts.init(chartDom);
+                charts3.push(chart3);
+
+                var series = [];
+                var legendData = [];
+                var categorias = []; // Array para almacenar las categorías del eje X
+
+                var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
+                    if (!acc[item.nombre_estacion]) {
+                        acc[item.nombre_estacion] = [];
+                    }
+                    acc[item.nombre_estacion].push(parseFloat(item.resultado));
                     return acc;
                 }, {});
 
-                var numeroDeParametros = Object.keys(datosAgrupados).length;
-                var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
-                for (let fila = 0; fila < numeroDeFilas; fila++) {
-                    var $row = $('<div>').addClass('row');
+                Object.keys(datosPorEstacion).forEach(nombre_estacion => {
+                    categorias.push(nombre_estacion); // Añadir el nombre de la estación a las categorías
+                });
 
-                    for (let col = 0; col < 2; col++) {
-                        var indice = fila * 2 + col;
-                        var parametro_ids = Object.keys(datosAgrupados);
-                        if (indice < parametro_ids.length) {
-                            var parametro_id = parametro_ids[indice];
-                            var $col = $('<div>').addClass('col-6');
-                            var $card = $('<div>').addClass('card card-custom gutter-b');
-                            var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
-                            $cardBody.attr('id', `grafico3${parametro_id}`);
+                categorias.forEach(nombre_estacion => {
+                    const valores = datosPorEstacion[nombre_estacion].sort((a, b) => a - b);
+                    const min = valores[0];
+                    const q1 = valores[Math.floor((valores.length / 4))];
+                    const median = valores[Math.floor((valores.length / 2))];
+                    const q3 = valores[Math.floor((3 * valores.length) / 4)];
+                    const max = valores[valores.length - 1];
+                    series.push({
+                        name: nombre_estacion,
+                        type: 'boxplot',
+                        data: [[min, q1, median, q3, max]]
+                    });
+                    legendData.push(nombre_estacion);
+                });
 
-                            // Ícono de FontAwesome como botón de expandir
-                            var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico3${parametro_id}`);
-                            $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
-
-                            // Crea el header del card con el título y el ícono de expandir
-                            var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
-                            var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
-                            $cardHeader.append($title).append($iconExpandir);
-
-                            // Añade el header y el body al card
-                            $card.append($cardHeader).append($cardBody);
-                            $col.append($card);
-                            $row.append($col);
+                var option = {
+                    title: {
+                        //text: datosAgrupados[parametro_id][0].nombre_parametro
+                    },
+                    tooltip: {
+                        trigger: 'item',
+                        axisPointer: {
+                            type: 'shadow'
                         }
-                    }
-                    $('#contenedorPrincipal3').append($row);
-                }
-                $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
-                    var modalChartContainer = document.getElementById('modalGraficoContainer');
-                    modalChartContainer.style.height = '400px';
-
-                    if (modalChartOption) {
-                        var modalChartInstance = echarts.init(modalChartContainer);
-                        modalChartInstance.setOption(modalChartOption, true);
-                    }
-                });
-
-                $(document).on('click', '.btn-expandir', function () {
-                    var chartId = $(this).data('target');
-                    var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
-                    modalChartOption = originalChartInstance.getOption();
-                    $('#graficoModal').modal('show');
-                });
-
-                var todasLasFechas = [];
-                datos.forEach(item => {
-                    todasLasFechas.push(item.fecha_muestreo);
-                });
-                var fechasUnicas = Array.from(new Set(todasLasFechas));
-                agregarRangoFecha(fechasUnicas);
-
-                parametro_ids.forEach(parametro_id => {
-                    var halfHeight = (window.innerHeight - 60) / 2;
-                    document.querySelectorAll('.half-screen').forEach(function (element) {
-                        element.style.height = `${halfHeight}px`;
-                    });
-
-                    var chartDom = document.getElementById('grafico3' + parametro_id);
-                    var chart3 = echarts.init(chartDom);
-                    charts3.push(chart3);
-
-                    var series = [];
-                    var legendData = [];
-                    var categorias = []; // Array para almacenar las categorías del eje X
-
-                    var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
-                        if (!acc[item.nombre_estacion]) {
-                            acc[item.nombre_estacion] = [];
-                        }
-                        acc[item.nombre_estacion].push(parseFloat(item.resultado));
-                        return acc;
-                    }, {});
-
-                    Object.keys(datosPorEstacion).forEach(nombre_estacion => {
-                        categorias.push(nombre_estacion); // Añadir el nombre de la estación a las categorías
-                    });
-
-                    categorias.forEach(nombre_estacion => {
-                        const valores = datosPorEstacion[nombre_estacion].sort((a, b) => a - b);
-                        const min = valores[0];
-                        const q1 = valores[Math.floor((valores.length / 4))];
-                        const median = valores[Math.floor((valores.length / 2))];
-                        const q3 = valores[Math.floor((3 * valores.length) / 4)];
-                        const max = valores[valores.length - 1];
-                        series.push({
-                            name: nombre_estacion,
-                            type: 'boxplot',
-                            data: [[min, q1, median, q3, max]]
-                        });
-                        legendData.push(nombre_estacion);
-                    });
-
-                    var option = {
-                        title: {
-                            //text: datosAgrupados[parametro_id][0].nombre_parametro
-                        },
-                        tooltip: {
-                            trigger: 'item',
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        },
-                        legend: {
-                            data: legendData
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: [] // Se utiliza `categorias` para el eje X
-                        },
-                        yAxis: {
-                            type: 'value'
-                        },
-                        series: series
-                    };
-                    chart3.setOption(option);
-                });
-                syncDataZoomFromMaster('range_fecha');
-            })
-            .catch(error => console.log(error));
+                    },
+                    legend: {
+                        data: legendData
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: [] // Se utiliza `categorias` para el eje X
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: series
+                };
+                chart3.setOption(option);
+            });
+            //syncDataZoomFromMaster('range_fecha');
+        });            
     }
     var charts4 = []
     var grafica4 = function () {
@@ -598,171 +602,161 @@
             nombre_estacion: estacionSeleccionados,
             id_parametros: id_parametros
         };
-        $.post(urlGetDataTelemetria, payload)
-            .then(response => {
-                var datos = response;
+        cargarDatos(payload, function (datos) {
+            var datosAgrupados = datos.reduce((acc, valorActual) => {
+                (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                return acc;
+            }, {});
 
-                if (!datos || datos.length === 0) {
-                    console.error('No hay datos disponibles.');
-                    return;
+            var numeroDeParametros = Object.keys(datosAgrupados).length;
+            var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
+            for (let fila = 0; fila < numeroDeFilas; fila++) {
+                var $row = $('<div>').addClass('row');
+                for (let col = 0; col < 2; col++) {
+                    var indice = fila * 2 + col;
+                    var parametro_ids = Object.keys(datosAgrupados);
+                    if (indice < parametro_ids.length) {
+                        var parametro_id = parametro_ids[indice];
+                        var $col = $('<div>').addClass('col-6');
+                        var $card = $('<div>').addClass('card card-custom gutter-b');
+                        var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
+                        $cardBody.attr('id', `grafico4${parametro_id}`);
+
+                        var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico4${parametro_id}`);
+                        $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
+
+                        var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
+                        var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
+                        $cardHeader.append($title).append($iconExpandir);
+
+                        $card.append($cardHeader).append($cardBody);
+                        $col.append($card);
+                        $row.append($col);
+                    }
                 }
+                $('#contenedorPrincipal4').append($row);
+            }
+            $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                var modalChartContainer = document.getElementById('modalGraficoContainer');
+                modalChartContainer.style.height = '400px';
 
-                var datosAgrupados = datos.reduce((acc, valorActual) => {
-                    (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                if (modalChartOption) {
+                    var modalChartInstance = echarts.init(modalChartContainer);
+                    modalChartInstance.setOption(modalChartOption, true);
+                }
+            });
+
+            $(document).on('click', '.btn-expandir', function () {
+                var chartId = $(this).data('target');
+                var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
+                modalChartOption = originalChartInstance.getOption();
+                $('#graficoModal').modal('show');
+            });
+
+            var todasLasFechas = [];
+            datos.forEach(item => {
+                todasLasFechas.push(item.fecha_muestreo);
+            });
+            var fechasUnicas = Array.from(new Set(todasLasFechas));
+            //agregarRangoFecha(fechasUnicas);
+
+            var halfHeight = (window.innerHeight - 60) / 2;
+            document.querySelectorAll('.half-screen').forEach(function (element) {
+                element.style.height = `${halfHeight}px`;
+            });
+
+            Object.keys(datosAgrupados).forEach(parametro_id => {
+                var chartDom = document.getElementById('grafico4' + parametro_id);
+                var chart4 = echarts.init(chartDom);
+                charts4.push(chart4);
+
+                var series = [];
+                var legendData = [];
+                var categorias = [];
+
+                var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
+                    if (!acc[item.nombre_estacion]) {
+                        acc[item.nombre_estacion] = [];
+                    }
+                    acc[item.nombre_estacion].push({ estacion: item.nombre_estacion, valor: parseFloat(item.resultado) });
                     return acc;
                 }, {});
 
-                var numeroDeParametros = Object.keys(datosAgrupados).length;
-                var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
-                for (let fila = 0; fila < numeroDeFilas; fila++) {
-                    var $row = $('<div>').addClass('row');
+                var allData = [];
 
-                    for (let col = 0; col < 2; col++) {
-                        var indice = fila * 2 + col;
-                        var parametro_ids = Object.keys(datosAgrupados);
-                        if (indice < parametro_ids.length) {
-                            var parametro_id = parametro_ids[indice];
-                            var $col = $('<div>').addClass('col-6');
-                            var $card = $('<div>').addClass('card card-custom gutter-b');
-                            var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
-                            $cardBody.attr('id', `grafico4${parametro_id}`);
+                Object.keys(datosPorEstacion).forEach(nombre_estacion => {
+                    categorias.push(nombre_estacion);
+                    const valores = datosPorEstacion[nombre_estacion];
 
-                            var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico4${parametro_id}`);
-                            $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
+                    valores.forEach(v => {
+                        allData.push([nombre_estacion, v.valor]);
+                    });
+                });
 
-                            var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
-                            var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0].nombre_parametro);
-                            $cardHeader.append($title).append($iconExpandir);
+                var minValor = Math.min(...datos.map(d => d.resultado));
+                var maxValor = Math.max(...datos.map(d => d.resultado));
+                var intervalo = 10;
+                var rangos = [];
 
-                            $card.append($cardHeader).append($cardBody);
-                            $col.append($card);
-                            $row.append($col);
-                        }
-                    }
-                    $('#contenedorPrincipal4').append($row);
+                for (var i = Math.floor(minValor); i <= Math.ceil(maxValor); i += intervalo) {
+                    rangos.push(i);
                 }
-                $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
-                    var modalChartContainer = document.getElementById('modalGraficoContainer');
-                    modalChartContainer.style.height = '400px';
 
-                    if (modalChartOption) {
-                        var modalChartInstance = echarts.init(modalChartContainer);
-                        modalChartInstance.setOption(modalChartOption, true);
+                var datosPorRango = datos.reduce((acc, valorActual) => {
+                    var rango = rangos.find(r => valorActual.resultado <= r);
+                    if (!acc[valorActual.nombre_estacion]) {
+                        acc[valorActual.nombre_estacion] = {};
                     }
-                });
+                    if (!acc[valorActual.nombre_estacion][rango]) {
+                        acc[valorActual.nombre_estacion][rango] = 0;
+                    }
+                    acc[valorActual.nombre_estacion][rango]++;
+                    return acc;
+                }, {});
 
-                $(document).on('click', '.btn-expandir', function () {
-                    var chartId = $(this).data('target');
-                    var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
-                    modalChartOption = originalChartInstance.getOption();
-                    $('#graficoModal').modal('show');
-                });
-
-                var todasLasFechas = [];
-                datos.forEach(item => {
-                    todasLasFechas.push(item.fecha_muestreo);
-                });
-                var fechasUnicas = Array.from(new Set(todasLasFechas));
-                agregarRangoFecha(fechasUnicas);
-
-                var halfHeight = (window.innerHeight - 60) / 2;
-                document.querySelectorAll('.half-screen').forEach(function (element) {
-                    element.style.height = `${halfHeight}px`;
-                });
-
-                Object.keys(datosAgrupados).forEach(parametro_id => {
-                    var chartDom = document.getElementById('grafico4' + parametro_id);
-                    var chart4 = echarts.init(chartDom);
-                    charts4.push(chart4);
-
-                    var series = [];
-                    var legendData = [];
-                    var categorias = [];
-
-                    var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
-                        if (!acc[item.nombre_estacion]) {
-                            acc[item.nombre_estacion] = [];
-                        }
-                        acc[item.nombre_estacion].push({ estacion: item.nombre_estacion, valor: parseFloat(item.resultado) });
-                        return acc;
-                    }, {});
-
-                    var allData = [];
-
-                    Object.keys(datosPorEstacion).forEach(nombre_estacion => {
-                        categorias.push(nombre_estacion);
-                        const valores = datosPorEstacion[nombre_estacion];
-
-                        valores.forEach(v => {
-                            allData.push([nombre_estacion, v.valor]);
+                var maxFrecuencia = Math.max(...Object.values(datosPorRango).flatMap(d => Object.values(d)));
+                var seriesData = [];
+                for (var estacion in datosPorRango) {
+                    for (var rango in datosPorRango[estacion]) {
+                        seriesData.push({
+                            name: estacion,
+                            value: [estacion, parseInt(rango), datosPorRango[estacion][rango]],
+                            symbolSize: (Math.sqrt(datosPorRango[estacion][rango]) / Math.sqrt(maxFrecuencia)) * 50
                         });
-                    });
-
-                    var minValor = Math.min(...datos.map(d => d.resultado));
-                    var maxValor = Math.max(...datos.map(d => d.resultado));
-                    var intervalo = 10;
-                    var rangos = [];
-
-                    for (var i = Math.floor(minValor); i <= Math.ceil(maxValor); i += intervalo) {
-                        rangos.push(i);
                     }
+                }
 
-                    var datosPorRango = datos.reduce((acc, valorActual) => {
-                        var rango = rangos.find(r => valorActual.resultado <= r);
-                        if (!acc[valorActual.nombre_estacion]) {
-                            acc[valorActual.nombre_estacion] = {};
-                        }
-                        if (!acc[valorActual.nombre_estacion][rango]) {
-                            acc[valorActual.nombre_estacion][rango] = 0;
-                        }
-                        acc[valorActual.nombre_estacion][rango]++;
-                        return acc;
-                    }, {});
-
-                    var maxFrecuencia = Math.max(...Object.values(datosPorRango).flatMap(d => Object.values(d)));
-                    var seriesData = [];
-                    for (var estacion in datosPorRango) {
-                        for (var rango in datosPorRango[estacion]) {
-                            seriesData.push({
-                                name: estacion,
-                                value: [estacion, parseInt(rango), datosPorRango[estacion][rango]],
-                                symbolSize: (Math.sqrt(datosPorRango[estacion][rango]) / Math.sqrt(maxFrecuencia)) * 50
-                            });
-                        }
-                    }
-
-                    series.push({
-                        name: 'Scatter',
-                        type: 'scatter',
-                        data: seriesData
-                    });
-
-                    var option = {
-                        title: {},
-                        tooltip: {
-                            trigger: 'item',
-                            formatter: function (params) {
-                                return `Estación: ${params.value[0]}<br/>Rango: ${params.value[1]}<br/>Frecuencia: ${params.value[2]}`;
-                            }
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: categorias,
-                            name: 'Estación'
-                        },
-                        yAxis: {
-                            type: 'value',
-                            name: 'Rango de PM2.5',
-                            data: rangos.map(r => `${r - intervalo / 2}-${r + intervalo / 2}`)
-                        },
-                        series: series
-                    };
-                    chart4.setOption(option);
+                series.push({
+                    name: 'Scatter',
+                    type: 'scatter',
+                    data: seriesData
                 });
 
-                syncDataZoomFromMaster('range_fecha');
-            })
-            .catch(error => console.log(error));
+                var option = {
+                    title: {},
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: function (params) {
+                            return `Estación: ${params.value[0]}<br/>Rango: ${params.value[1]}<br/>Frecuencia: ${params.value[2]}`;
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: categorias,
+                        name: 'Estación'
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: 'Rango de PM2.5',
+                        data: rangos.map(r => `${r - intervalo / 2}-${r + intervalo / 2}`)
+                    },
+                    series: series
+                };
+                chart4.setOption(option);
+            });
+
+            //syncDataZoomFromMaster('range_fecha');
+        });
     };
     var charts5 = []
     var grafica5 = function () {
@@ -776,218 +770,205 @@
             nombre_estacion: estacionSeleccionados,
             id_parametros: id_parametros
         };
-        $.post(urlGetDataTelemetria, payload)
-            .then(response => {
-                var datos = response;
+        cargarDatos(payload, function (datos) {
+            var datosAgrupados = datos.reduce((acc, valorActual) => {
+                (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                return acc;
+            }, {});
 
-                if (!datos || datos.length === 0) {
-                    console.error('No hay datos disponibles.');
-                    return;
+            var numeroDeParametros = Object.keys(datosAgrupados).length;
+            var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
+            for (let fila = 0; fila < numeroDeFilas; fila++) {
+                var $row = $('<div>').addClass('row');
+
+                for (let col = 0; col < 2; col++) {
+                    var indice = fila * 2 + col;
+                    var parametro_ids = Object.keys(datosAgrupados);
+                    if (indice < parametro_ids.length) {
+                        var parametro_id = parametro_ids[indice];
+                        var $col = $('<div>').addClass('col-6');
+                        var $card = $('<div>').addClass('card card-custom gutter-b');
+                        var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
+                        $cardBody.attr('id', `grafico5${parametro_id}`);
+
+                        var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico5${parametro_id}`);
+                        $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
+
+                        var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
+                        var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0]?.nombre_parametro || 'Sin Nombre');
+                        $cardHeader.append($title).append($iconExpandir);
+
+                        $card.append($cardHeader).append($cardBody);
+                        $col.append($card);
+                        $row.append($col);
+                    }
                 }
+                $('#contenedorPrincipal5').append($row);
+            }
+            $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
+                var modalChartContainer = document.getElementById('modalGraficoContainer');
+                modalChartContainer.style.height = '400px';
 
-                var datosAgrupados = datos.reduce((acc, valorActual) => {
-                    (acc[valorActual.parametro_id] = acc[valorActual.parametro_id] || []).push(valorActual);
+                if (modalChartOption) {
+                    var modalChartInstance = echarts.init(modalChartContainer);
+                    modalChartInstance.setOption(modalChartOption, true);
+                }
+            });
+
+            $(document).on('click', '.btn-expandir', function () {
+                var chartId = $(this).data('target');
+                var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
+                modalChartOption = originalChartInstance.getOption();
+                $('#graficoModal').modal('show');
+            });
+
+            var todasLasFechas = [];
+            datos.forEach(item => {
+                todasLasFechas.push(item.fecha_muestreo);
+            });
+            var fechasUnicas = Array.from(new Set(todasLasFechas));
+            //agregarRangoFecha(fechasUnicas);
+
+            var fechaActual = new Date();
+            fechaActual.setMonth(mesSeleccionado);
+            var mesString = fechaActual.toISOString().split('T')[0].slice(0, 7);
+
+            var halfHeight = (window.innerHeight - 60) / 2;
+            document.querySelectorAll('.half-screen').forEach(function (element) {
+                element.style.height = `${halfHeight}px`;
+            });
+
+            Object.keys(datosAgrupados).forEach(parametro_id => {
+                var chartDom = document.getElementById('grafico5' + parametro_id);
+                var chart5 = echarts.init(chartDom);
+                charts5.push(chart5);
+
+                var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
+                    if (!acc[item.nombre_estacion]) {
+                        acc[item.nombre_estacion] = [];
+                    }
+                    acc[item.nombre_estacion].push({ fecha: item.fecha_muestreo.split(' ')[0], valor: parseFloat(item.resultado), estacion: item.nombre_estacion });
                     return acc;
                 }, {});
 
-                var numeroDeParametros = Object.keys(datosAgrupados).length;
-                var numeroDeFilas = Math.ceil(numeroDeParametros / 2);
-                for (let fila = 0; fila < numeroDeFilas; fila++) {
-                    var $row = $('<div>').addClass('row');
+                var heatmapData = [];
+                var scatterData = [];
 
-                    for (let col = 0; col < 2; col++) {
-                        var indice = fila * 2 + col;
-                        var parametro_ids = Object.keys(datosAgrupados);
-                        if (indice < parametro_ids.length) {
-                            var parametro_id = parametro_ids[indice];
-                            var $col = $('<div>').addClass('col-6');
-                            var $card = $('<div>').addClass('card card-custom gutter-b');
-                            var $cardBody = $('<div>').addClass('telemetria-grafico card-body half-screen');
-                            $cardBody.attr('id', `grafico5${parametro_id}`);
-
-                            var $iconExpandir = $('<i>').addClass('fas fa-expand-arrows-alt btn-expandir').attr('data-target', `grafico5${parametro_id}`);
-                            $iconExpandir.css({ 'cursor': 'pointer', 'margin-right': '10px' });
-
-                            var $cardHeader = $('<div>').addClass('card-header d-flex justify-content-between align-items-center');
-                            var $title = $('<h1>').addClass('card-title').text(datosAgrupados[parametro_id][0]?.nombre_parametro || 'Sin Nombre');
-                            $cardHeader.append($title).append($iconExpandir);
-
-                            $card.append($cardHeader).append($cardBody);
-                            $col.append($card);
-                            $row.append($col);
+                Object.keys(datosPorEstacion).forEach(estacion => {
+                    var datosPorFecha = datosPorEstacion[estacion].reduce((acc, item) => {
+                        if (!acc[item.fecha]) {
+                            acc[item.fecha] = item.valor;
+                        } else {
+                            acc[item.fecha] = Math.max(acc[item.fecha], item.valor);
                         }
-                    }
-                    $('#contenedorPrincipal5').append($row);
-                }
-                $('#graficoModal').off('shown.bs.modal').on('shown.bs.modal', function () {
-                    var modalChartContainer = document.getElementById('modalGraficoContainer');
-                    modalChartContainer.style.height = '400px';
-
-                    if (modalChartOption) {
-                        var modalChartInstance = echarts.init(modalChartContainer);
-                        modalChartInstance.setOption(modalChartOption, true);
-                    }
-                });
-
-                $(document).on('click', '.btn-expandir', function () {
-                    var chartId = $(this).data('target');
-                    var originalChartInstance = echarts.getInstanceByDom(document.getElementById(chartId));
-                    modalChartOption = originalChartInstance.getOption();
-                    $('#graficoModal').modal('show');
-                });
-
-                var todasLasFechas = [];
-                datos.forEach(item => {
-                    todasLasFechas.push(item.fecha_muestreo);
-                });
-                var fechasUnicas = Array.from(new Set(todasLasFechas));
-                agregarRangoFecha(fechasUnicas);
-
-                var fechaActual = new Date();
-                fechaActual.setMonth(mesSeleccionado);
-                var mesString = fechaActual.toISOString().split('T')[0].slice(0, 7);
-
-                var halfHeight = (window.innerHeight - 60) / 2;
-                document.querySelectorAll('.half-screen').forEach(function (element) {
-                    element.style.height = `${halfHeight}px`;
-                });
-
-                Object.keys(datosAgrupados).forEach(parametro_id => {
-                    var chartDom = document.getElementById('grafico5' + parametro_id);
-                    var chart5 = echarts.init(chartDom);
-                    charts5.push(chart5);
-
-                    var datosPorEstacion = datosAgrupados[parametro_id].reduce((acc, item) => {
-                        if (!acc[item.nombre_estacion]) {
-                            acc[item.nombre_estacion] = [];
-                        }
-                        acc[item.nombre_estacion].push({ fecha: item.fecha_muestreo.split(' ')[0], valor: parseFloat(item.resultado), estacion: item.nombre_estacion });
                         return acc;
                     }, {});
 
-                    var heatmapData = [];
-                    var scatterData = [];
-
-                    Object.keys(datosPorEstacion).forEach(estacion => {
-                        var datosPorFecha = datosPorEstacion[estacion].reduce((acc, item) => {
-                            if (!acc[item.fecha]) {
-                                acc[item.fecha] = item.valor;
-                            } else {
-                                acc[item.fecha] = Math.max(acc[item.fecha], item.valor);
-                            }
-                            return acc;
-                        }, {});
-
-                        Object.keys(datosPorFecha).forEach(fecha => {
-                            if (fecha.startsWith(mesString)) {
-                                heatmapData.push([fecha, datosPorFecha[fecha], estacion]);
-                                scatterData.push([fecha, datosPorFecha[fecha], estacion]);
-                            }
-                        });
-                    });
-
-                    var minValor = Math.min(...heatmapData.map(d => d[1]));
-                    var maxValor = Math.max(...heatmapData.map(d => d[1]));
-
-                    var option = {
-                        tooltip: {
-                            position: 'top',
-                            formatter: function (params) {
-                                return `Fecha: ${params.value[0]}<br/>Estación: ${params.value[2]}<br/>Valor Máximo: ${params.value[1]}`;
-                            }
-                        },
-                        visualMap: {
-                            min: minValor,
-                            max: maxValor,
-                            calculable: true,
-                            orient: 'horizontal',
-                            left: 'center',
-                            bottom: '15%',
-                            show: false
-                        },
-                        calendar: {
-                            range: mesString,
-                            left: 'center',
-                            top: 'middle',
-                            orient: 'vertical',
-                            cellSize: [60, 60],
-                            splitLine: {
-                                show: false,
-                                lineStyle: {
-                                    color: '#ddd',
-                                    width: 1,
-                                    type: 'solid'
-                                }
-                            },
-                            itemStyle: {
-                                borderWidth: 1,
-                                borderColor: '#ccc'
-                            },
-                            dayLabel: {
-                                firstDay: 1,
-                                nameMap: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
-                            },
-                            monthLabel: {
-                                show: true,
-                                nameMap: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-                            },
-                            yearLabel: {
-                                show: false
-                            }
-                        },
-                        series: [{
-                            type: 'heatmap',
-                            coordinateSystem: 'calendar',
-                            data: heatmapData.map(item => [item[0], item[1]])
-                        },
-                        {
-                            type: 'scatter',
-                            coordinateSystem: 'calendar',
-                            symbolSize: 0,
-                            label: {
-                                show: true,
-                                formatter: function (params) {
-                                    var d = echarts.number.parseDate(params.value[0]);
-                                    return d.getDate() + '\n\n';
-                                },
-                                color: '#000',
-                                fontWeight: 'bold'
-                            },
-                            data: scatterData,
-                            silent: true
-                        },
-                        {
-                            type: 'scatter',
-                            coordinateSystem: 'calendar',
-                            symbolSize: 0,
-                            label: {
-                                show: true,
-                                formatter: function (params) {
-                                    var d = echarts.number.parseDate(params.value[0]);
-                                    return '\n\n' + params.value[1].toFixed(2);
-                                },
-                                color: '#000'
-                            },
-                            data: scatterData,
-                            silent: true
+                    Object.keys(datosPorFecha).forEach(fecha => {
+                        if (fecha.startsWith(mesString)) {
+                            heatmapData.push([fecha, datosPorFecha[fecha], estacion]);
+                            scatterData.push([fecha, datosPorFecha[fecha], estacion]);
                         }
-                        ]
-                    };
-
-                    chart5.setOption(option);
+                    });
                 });
 
-                syncDataZoomFromMaster('range_fecha');
-            })
-            .catch(error => console.log(error));
+                var minValor = Math.min(...heatmapData.map(d => d[1]));
+                var maxValor = Math.max(...heatmapData.map(d => d[1]));
+
+                var option = {
+                    tooltip: {
+                        position: 'top',
+                        formatter: function (params) {
+                            return `Fecha: ${params.value[0]}<br/>Estación: ${params.value[2]}<br/>Valor Máximo: ${params.value[1]}`;
+                        }
+                    },
+                    visualMap: {
+                        min: minValor,
+                        max: maxValor,
+                        calculable: true,
+                        orient: 'horizontal',
+                        left: 'center',
+                        bottom: '15%',
+                        show: false
+                    },
+                    calendar: {
+                        range: mesString,
+                        left: 'center',
+                        top: 'middle',
+                        orient: 'vertical',
+                        cellSize: [60, 60],
+                        splitLine: {
+                            show: false,
+                            lineStyle: {
+                                color: '#ddd',
+                                width: 1,
+                                type: 'solid'
+                            }
+                        },
+                        itemStyle: {
+                            borderWidth: 1,
+                            borderColor: '#ccc'
+                        },
+                        dayLabel: {
+                            firstDay: 1,
+                            nameMap: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+                        },
+                        monthLabel: {
+                            show: true,
+                            nameMap: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+                        },
+                        yearLabel: {
+                            show: false
+                        }
+                    },
+                    series: [{
+                        type: 'heatmap',
+                        coordinateSystem: 'calendar',
+                        data: heatmapData.map(item => [item[0], item[1]])
+                    },
+                    {
+                        type: 'scatter',
+                        coordinateSystem: 'calendar',
+                        symbolSize: 0,
+                        label: {
+                            show: true,
+                            formatter: function (params) {
+                                var d = echarts.number.parseDate(params.value[0]);
+                                return d.getDate() + '\n\n';
+                            },
+                            color: '#000',
+                            fontWeight: 'bold'
+                        },
+                        data: scatterData,
+                        silent: true
+                    },
+                    {
+                        type: 'scatter',
+                        coordinateSystem: 'calendar',
+                        symbolSize: 0,
+                        label: {
+                            show: true,
+                            formatter: function (params) {
+                                var d = echarts.number.parseDate(params.value[0]);
+                                return '\n\n' + params.value[1].toFixed(2);
+                            },
+                            color: '#000'
+                        },
+                        data: scatterData,
+                        silent: true
+                    }
+                    ]
+                };
+
+                chart5.setOption(option);
+            });
+
+            //syncDataZoomFromMaster('range_fecha');
+        });
     };
 
     // Llama a la función cuando cambie el selector
     $('#selectMes').on('change', grafica5);
-
-
-
-
 
     var modalChartOption = null;
 
@@ -1177,18 +1158,12 @@
             ],
         };
         option && myChart.setOption(option);
-
-        myChart.on('dataZoom', function (event) {
-            var option = myChart.getOption();
-            var startValue = option.dataZoom[0].startValue;
-            var endValue = option.dataZoom[0].endValue;
-        });
     }
 
-    var getAllDynamicChartInstances = function() {
+    /*var getAllDynamicChartInstances = function() {
         var allElements = document.querySelectorAll('[id]'); // Selecciona todos los elementos con `id`
         var chartInstances = [];
-        var pattern = /^(grafica|grafico)\d+$/; // Expresión regular para coincidir con tus `id`
+        var pattern = /^(grafica1|grafico)\d+$/; // Expresión regular para coincidir con tus `id`
 
         allElements.forEach(function (element) {
             if (pattern.test(element.id)) {
@@ -1200,7 +1175,25 @@
         });
 
         return chartInstances;
-    }
+    }*/
+
+    var getAllDynamicChartInstances = function () {
+        var container = document.getElementById('grafica1'); // Selecciona el contenedor específico
+        var allElements = container.querySelectorAll('[id]'); // Selecciona todos los elementos con `id` dentro del contenedor
+        var chartInstances = [];
+        var pattern = /^grafico\d+$/; // Expresión regular para coincidir con tus `id` específicos
+
+        allElements.forEach(function (element) {
+            if (pattern.test(element.id)) {
+                var instance = echarts.getInstanceByDom(element);
+                if (instance) {
+                    chartInstances.push(instance);
+                }
+            }
+        });
+
+        return chartInstances;
+    };
 
     var syncDataZoomFromMaster = function(masterChartId) {
         var masterChart = getChartInstanceById(masterChartId);
@@ -1209,16 +1202,15 @@
             return; // Sale si no se encuentra la gráfica maestra
         }
         var allCharts = getAllDynamicChartInstances(); // Obtiene todas las instancias como antes
-
         masterChart.on('dataZoom', function () {
             var option = masterChart.getOption();
+            console.log(option)
             var zoomOption = {
                 dataZoom: [{
                     start: option.dataZoom[0].start,
                     end: option.dataZoom[0].end
                 }]
             };
-
             allCharts.forEach(function (chart) {
                 if (chart !== masterChart) { // Aplica la configuración a todas las gráficas excepto la maestra
                     chart.setOption(zoomOption);
@@ -1234,6 +1226,47 @@
         }
         return null; // Retorna nulo si el elemento con ese ID no existe
     }
+
+    document.getElementById('rangeSelector').addEventListener('change', function () {
+        var masterChart = getChartInstanceById('range_fecha');
+        var option = masterChart.getOption();
+        var xAxisData = option.xAxis[0].data.map(d => new Date(d));
+
+        // Mostrar los datos del eje X en la consola
+        //console.log(xAxisData);
+        var days = parseInt(this.value);
+        var mostRecentDate = xAxisData[xAxisData.length - 1];
+        var targetDate = new Date(mostRecentDate);
+        targetDate.setDate(targetDate.getDate() - days);
+
+        // Encontrar el índice del targetDate más cercano en xAxisData
+        var startIndex = xAxisData.findIndex(date => {
+            return date.getFullYear() === targetDate.getFullYear() &&
+                date.getMonth() === targetDate.getMonth() &&
+                date.getDate() === targetDate.getDate();
+        });
+
+        // Si no se encuentra la fecha exacta, buscar la más cercana
+        if (startIndex === -1) {
+            startIndex = xAxisData.reduce((closestIndex, currentDate, currentIndex) => {
+                var currentDiff = Math.abs(currentDate - targetDate);
+                var closestDiff = Math.abs(xAxisData[closestIndex] - targetDate);
+                return currentDiff < closestDiff ? currentIndex : closestIndex;
+            }, 0);
+        }
+        console.log(startIndex)
+        console.log(xAxisData.length - 1)
+        
+        var zoomOption = {
+            dataZoom: [{
+                type: 'slider',
+                startValue: startIndex, // Valor Unix del startIndex
+                endValue: xAxisData.length - 1 // Valor Unix del último elemento
+            }]
+        };
+        masterChart.setOption(zoomOption);
+        console.log(masterChart.getOption())
+    });
 
     var infoTelemetria = ''
     var obtenerInfo = function () {
