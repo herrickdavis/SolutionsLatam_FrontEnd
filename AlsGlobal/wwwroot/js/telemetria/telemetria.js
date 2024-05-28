@@ -1266,6 +1266,19 @@
         };
         masterChart.setOption(zoomOption);
         console.log(masterChart.getOption())
+        option = masterChart.getOption();
+        var allCharts = getAllDynamicChartInstances();
+        var zoomOption = {
+            dataZoom: [{
+                start: option.dataZoom[0].start,
+                end: option.dataZoom[0].end
+            }]
+        };
+        allCharts.forEach(function (chart) {
+            if (chart !== masterChart) { // Aplica la configuración a todas las gráficas excepto la maestra
+                chart.setOption(zoomOption);
+            }
+        });
     });
 
     var infoTelemetria = ''
